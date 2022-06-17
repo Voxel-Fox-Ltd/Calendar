@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Tuple, Optional
+from typing import List, Tuple, Optional
 from datetime import datetime as dt, timedelta
 import uuid
 
@@ -7,6 +7,7 @@ from discord.ext import commands, tasks, vbu
 import pytz
 import pytimeparse
 
+from cogs.utils import MONTH_OPTIONS
 from cogs.utils.types import GuildContext, ScheduledMessageDict
 
 
@@ -159,20 +160,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     name="month",
                     description="The month that you want the message to be sent.",
                     type=discord.ApplicationCommandOptionType.integer,
-                    choices=[
-                        discord.ApplicationCommandOptionChoice(name="January", value=1),
-                        discord.ApplicationCommandOptionChoice(name="February", value=2),
-                        discord.ApplicationCommandOptionChoice(name="March", value=3),
-                        discord.ApplicationCommandOptionChoice(name="April", value=4),
-                        discord.ApplicationCommandOptionChoice(name="May", value=5),
-                        discord.ApplicationCommandOptionChoice(name="June", value=6),
-                        discord.ApplicationCommandOptionChoice(name="July", value=7),
-                        discord.ApplicationCommandOptionChoice(name="August", value=8),
-                        discord.ApplicationCommandOptionChoice(name="September", value=9),
-                        discord.ApplicationCommandOptionChoice(name="October", value=10),
-                        discord.ApplicationCommandOptionChoice(name="November", value=11),
-                        discord.ApplicationCommandOptionChoice(name="December", value=12),
-                    ],
+                    choices=list(MONTH_OPTIONS),
                 ),
                 discord.ApplicationCommandOption(
                     name="day",
@@ -383,6 +371,70 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # And send
         return await interaction.response.send_autocomplete(send_messages)
 
+    @schedule.command(
+        name="list",
+        application_command_meta=commands.ApplicationCommandMeta(
+            options=[
+                discord.ApplicationCommandOption(
+                    name="month",
+                    description="The month that you want to look at.",
+                    type=discord.ApplicationCommandOptionType.integer,
+                ),
+            ],
+        ),
+    )
+    async def schedule_list(
+            self,
+            ctx: GuildContext,
+            month: Optional[int]):
+        """
+        Check a list of scheduled messages.
+        """
+
+        # Get times
+        now = dt.utcnow()
+        if not month:
+            month = now.month
+        start = dt(
+            now.year,
+            month,
+            1,
+        )
+        end = dt(
+            now.year if month < 12 else now.year + 1,
+            month + 1 if month < 12 else 1,
+            1,
+        )
+
+        # Get the list of events
+        await ctx.interaction.response.defer()
+        async with vbu.Database() as db:
+            messages: List[ScheduledMessageDict] = await db.call(
+                """
+                SELECT
+                    *
+                FROM
+                    scheduled_messages
+                WHERE
+                    guild_id=$1
+                AND
+                    timestamp >= $2
+                AND
+                    timestamp < $3
+                """,
+                ctx.guild.id, start, end,
+            )
+
+        # And respond
+        if not messages:
+            return await ctx.interaction.followup.send(
+                "You have no scheduled messages for that month.",
+            )
+        message_strings: List[str] = [
+            f"\N{BULLET} <#{i['channel_id']}>: {i['text'][:50]}"
+            for i in messages
+        ]
+        return await ctx.interaction.followup.send("\n".join(message_strings))
 
 def setup(bot: vbu.Bot):
     x = MessageScheduler(bot)
