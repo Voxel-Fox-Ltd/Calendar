@@ -8,7 +8,7 @@ import pytz
 import pytimeparse
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
-from cogs.utils.values import MONTH_OPTIONS, TIMEZONE_OPTIONS
+from cogs.utils.values import MONTH_OPTIONS, REPEAT_OPTIONS_WITH_NONE, TIMEZONE_OPTIONS
 
 
 class MessageScheduler(vbu.Cog[vbu.Bot]):
@@ -279,15 +279,73 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         await ctx.interaction.followup.send(response)
 
     @schedule.command(
+        name="repeat",
+        application_command_meta=commands.ApplicationCommandMeta(
+            options=[
+                discord.ApplicationCommandOption(
+                    name="id",
+                    description="The message that you want to set to repeat.",
+                    type=discord.ApplicationCommandOptionType.string,
+                    autocomplete=True,
+                ),
+                discord.ApplicationCommandOption(
+                    name="repeat",
+                    description="How often the event should repeat.",
+                    type=discord.ApplicationCommandOptionType.string,
+                    choices=list(REPEAT_OPTIONS_WITH_NONE),
+                ),
+            ],
+        ),
+    )
+    async def schedule_repeat(
+            self,
+            ctx: GuildContext,
+            id: str,
+            repeat: str):
+        """
+        Set an event to repeat.
+        """
+
+        # See if the message is a UUID
+        message_is_id = True
+        try:
+            uuid.UUID(id)
+        except ValueError:
+            message_is_id = False
+
+        # Only edit if we have an ID
+        if not message_is_id:
+            return await ctx.interaction.response.send_message(
+                "I can only edit scheduled messages by their ID."
+            )
+
+        # Alright, time to edit
+        await ctx.interaction.response.defer()
+        async with vbu.Database() as db:
+            await db.call(
+                """
+                UPDATE
+                    scheduled_messages
+                SET
+                    repeat=$2
+                WHERE
+                    id=$1
+                """,
+                id, repeat if repeat != "none" else None,
+            )
+
+        # And done
+        return await ctx.interaction.followup.send("Event updated :)")
+
+    @schedule.command(
         name="delete",
         application_command_meta=commands.ApplicationCommandMeta(
             options=[
                 discord.ApplicationCommandOption(
-                    name="message",
+                    name="id",
                     description="The message that you want to delete.",
                     type=discord.ApplicationCommandOptionType.string,
                     autocomplete=True,
-                    required=False,
                 ),
             ],
             guild_only=True,
@@ -296,7 +354,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
     async def schedule_delete(
             self,
             ctx: GuildContext,
-            message: Optional[str]):
+            id: Optional[str]):
         """
         Delete a scheduled message.
         """
@@ -304,7 +362,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # See if the message is a UUID
         message_is_id = True
         try:
-            uuid.UUID(message)
+            uuid.UUID(id)
         except ValueError:
             message_is_id = False
 
@@ -327,13 +385,14 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 RETURNING
                     *
                 """,
-                message, ctx.guild.id,
+                id, ctx.guild.id,
             )
 
         # And done
-        return await ctx.interaction.followup.send("Deleted message :)")
+        return await ctx.interaction.followup.send("Deleted scheduled message :)")
 
     @schedule_delete.autocomplete
+    @schedule_repeat.autocomplete
     async def schedule_delete_message_autocomplete(
             self,
             ctx: GuildContext,
@@ -457,7 +516,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         message_strings: List[str] = list()
         for i in messages:
             timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
-            text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp}: {i['text'][:50]}"
+            text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp} (`{i['id']}`): {i['text'][:50]}"
             message_strings.append(text)
         return await interaction.followup.send("\n".join(message_strings))
 

@@ -47,7 +47,6 @@ CREATE TABLE IF NOT EXISTS user_settings(
 
 DO $$ BEGIN
     CREATE TYPE repeat_time AS ENUM(
-        'none',
         'daily',
         'weekly',
         'monthly',

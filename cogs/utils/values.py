@@ -6,6 +6,8 @@ import discord
 __all__ = (
     'MONTH_OPTIONS',
     'TIMEZONE_OPTIONS',
+    'REPEAT_OPTIONS',
+    'REPEAT_OPTIONS_WITH_NONE',
 )
 
 
@@ -32,6 +34,19 @@ TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
     discord.ApplicationCommandOptionChoice(name="CST"),
     discord.ApplicationCommandOptionChoice(name="MST"),
     discord.ApplicationCommandOptionChoice(name="PST"),
+)
+
+
+REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
+    discord.ApplicationCommandOptionChoice(name="Daily", value="daily"),
+    discord.ApplicationCommandOptionChoice(name="Monthly", value="monthly"),
+    discord.ApplicationCommandOptionChoice(name="Yearly", value="yearly"),
+)
+
+
+REPEAT_OPTIONS_WITH_NONE: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
+    discord.ApplicationCommandOptionChoice(name="None", value="none"),
+    *REPEAT_OPTIONS,
 )
 
 
