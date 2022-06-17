@@ -4,6 +4,7 @@ from datetime import datetime as dt, timedelta
 import discord
 from discord.ext import commands, tasks, vbu
 import pytz
+import pytimeparse
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
 
@@ -133,7 +134,16 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         Schedule a message to be sent in a given channel at a point in the future.
         """
 
-        await ctx.send("Not yet implemented.")
+        # Make sure it's a valid time
+        future_seconds = pytimeparse.parse(future)
+        if future_seconds is None or future_seconds < 0:
+            return await ctx.interaction.response.send_message("Your given time is invalid.")
+
+        # Make an actual timestamp
+        send_time = dt.utcnow() + timedelta(seconds=future_seconds)
+
+        # And save
+        await self.save_scheduled_message(ctx, message, send_time, channel)
 
     @schedule_add.command(
         name="at",
@@ -220,6 +230,17 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         )
         if send_time < now:
             send_time = send_time.replace(year=send_time.year + 1)
+
+        # And save
+        await self.save_scheduled_message(ctx, message, send_time, channel)
+
+    async def save_scheduled_message(
+            self,
+            ctx: GuildContext,
+            message: str,
+            send_time: dt,
+            channel: discord.TextChannel):
+        ...
 
         # Save it to db
         await ctx.interaction.response.defer()
