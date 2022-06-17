@@ -60,7 +60,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             AND
                 timestamp < $2
             AND
-                NOT (id=ANY($3::UUID[]))
+                repeat = 'daily'
+            AND
+                NOT (id = ANY($3::UUID[]))
             """,
             filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
         )
@@ -94,7 +96,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             AND
                 timestamp < $2
             AND
-                NOT (id=ANY($3::UUID[]))
+                repeat = 'monthly'
+            AND
+                NOT (id = ANY($3::UUID[]))
             """,
             filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
         )
@@ -128,7 +132,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             AND
                 timestamp < $2
             AND
-                NOT (id=ANY($3::UUID[]))
+                repeat = 'yearly'
+            AND
+                NOT (id = ANY($3::UUID[]))
             """,
             filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
         )
@@ -154,7 +160,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 AND
                     timestamp < $2
                 AND
-                    NOT (id=ANY($3::UUID[]))
+                    NOT (id = ANY($3::UUID[]))
                 """,
                 now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
             )
