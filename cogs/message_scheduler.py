@@ -29,6 +29,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         """
 
         # Get our scheduled messages to be sent
+        self.logger.info("Looking for scheduled messages")
         now = dt.utcnow().replace(second=0, microsecond=0)
         async with vbu.Database() as db:
             messages: List[ScheduledMessageDict] = await db.call(
@@ -46,6 +47,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 """,
                 now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
             )
+        self.logger.info(messages)
 
         # Send them
         for i in messages:
@@ -58,8 +60,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     i['text'],
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
+                self.logger.info("Sent message %s to %s" % (i['text'], channel.id))
             except discord.HTTPException:
-                pass
+                self.logger.info("Failed to send message %s to %s" % (i['text'], channel.id))
 
         # Cache the IDs so as to not resend
         for i in messages:
