@@ -396,11 +396,15 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             month,
             1,
         )
+        if start < now:
+            start = start.replace(year=start.year + 1)
         end = dt(
             now.year if month < 12 else now.year + 1,
             month + 1 if month < 12 else 1,
             1,
         )
+        if start > end:
+            end = end.replace(year=end.year + 1)
 
         # Get the list of events
         await ctx.interaction.response.defer()
