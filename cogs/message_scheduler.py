@@ -480,7 +480,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             )
         )
 
-    @vbu.Cog.listener("component_interaction")
+    @vbu.Cog.listener("on_component_interaction")
     async def schedule_list_command_button(
             self,
             interaction: discord.Interaction):
