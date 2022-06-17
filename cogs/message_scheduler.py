@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Tuple, Optional
 from datetime import datetime as dt, timedelta
 
 import discord
@@ -87,7 +87,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         await self.bot.wait_until_ready()
 
     @commands.group(
-        application_command_meta=commands.ApplicationCommandMeta(),
+        application_command_meta=commands.ApplicationCommandMeta(
+            guild_only=True,
+        ),
     )
     async def schedule(self, _):
         ...
@@ -283,6 +285,78 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             f"{future} with ID `{created['id']!s}` :)"
         )
         await ctx.interaction.followup.send(response)
+
+    @schedule.command(
+        name="delete",
+        application_command_meta=commands.ApplicationCommandMeta(
+            options=[
+                discord.ApplicationCommandOption(
+                    name="message",
+                    description="The message that you want to delete.",
+                    type=discord.ApplicationCommandOptionType.string,
+                    autocomplete=True,
+                    required=False,
+                ),
+            ],
+            guild_only=True,
+        ),
+    )
+    async def schedule_delete(
+            self,
+            ctx: GuildContext,
+            message: Optional[str]):
+        """
+        Delete a scheduled message.
+        """
+
+        # See if the message is a UUID
+        message_is_id = True
+        try:
+            uuid.UUID(message)
+        except:
+            message_is_id = False
+
+        # See where we're getting it from the database
+        return await ctx.interaction.response.send_message("Not yet implemented.")
+
+    @schedule_delete.autocomplete
+    async def schedule_delete_message_autocomplete(
+            self,
+            ctx: GuildContext,
+            interaction: discord.Interaction):
+        """
+        Return the scheduled messages.
+        """
+
+        # Get all the data
+        async with vbu.Database() as db:
+            messages: List[ScheduledMessageDict] = await db.call(
+                """
+                SELECT
+                    *
+                FROM
+                    scheduled_messages
+                WHERE
+                    guild_id=$1
+                ORDER BY
+                    timestamp DESC
+                """,
+                ctx.guild.id,
+            )
+
+        # Format into a nice string
+        send_messages: List[discord.ApplicationCommandOptionChoice] = []
+        for i in messages:
+            name = f"<#{i['channel_id']}>: {i['text']}"
+            if len(name) > 100:
+                name = name[:-97] + "..."
+            send_messages.append(discord.ApplicationCommandOptionChoice(
+                name=name,
+                value=str(i['id'])
+            ))
+
+        # And send
+        return await interaction.response.send_autocomplete(send_messages)
 
 
 def setup(bot: vbu.Bot):
