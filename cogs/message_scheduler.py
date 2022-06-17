@@ -228,7 +228,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     )
                 VALUES
                     (
-                        generate_uuid_v4(),  -- id
+                        uuid_generate_v4(),  -- id
                         $1,  -- guild_id
                         $2,  -- channel_id
                         $3,  -- user_id
