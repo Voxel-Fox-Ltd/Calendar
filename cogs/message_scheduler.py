@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List, Tuple, Optional
 from datetime import datetime as dt, timedelta
+import uuid
 
 import discord
 from discord.ext import commands, tasks, vbu
@@ -7,9 +8,6 @@ import pytz
 import pytimeparse
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
-
-if TYPE_CHECKING:
-    import uuid
 
 
 class MessageScheduler(vbu.Cog[vbu.Bot]):
@@ -309,11 +307,13 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         Delete a scheduled message.
         """
 
+        self.logger.info(message)
+
         # See if the message is a UUID
         message_is_id = True
         try:
             uuid.UUID(message)
-        except:
+        except ValueError:
             message_is_id = False
 
         # Only delete if we have an ID
