@@ -402,6 +402,10 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
 
         # Get times
         now = dt.utcnow()
+        now_plus_one_month = now.replace(
+            year=now.year if now.month < 12 else now.year + 1,
+            month=now.month + 1 if now.month < 12 else 1,
+        )
         if not month:
             month = now.month
         start = dt(
@@ -409,7 +413,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             month,
             1,
         )
-        if start < now:
+        if start < now_plus_one_month:
             start = start.replace(year=start.year + 1)
         end = dt(
             now.year if month < 12 else now.year + 1,
@@ -448,7 +452,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # And respond
         if not messages:
             return await interaction.followup.send(
-                f"You have no scheduled messages for {MONTH_OPTIONS[month - 1].name}.",
+                f"You have no scheduled messages for {MONTH_OPTIONS[month - 1].name} {start.year}.",
             )
         message_strings: List[str] = list()
         for i in messages:
