@@ -403,7 +403,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # Get times
         now = dt.utcnow()
         now_minus_one_month = now.replace(
-            year=now.year if now.month > 1 else now.year 1 1,
+            year=now.year if now.month > 1 else now.year - 1,
             month=now.month - 1 if now.month > 1 else 12,
         )
         if not month:
