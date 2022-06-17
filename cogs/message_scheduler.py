@@ -347,7 +347,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # Format into a nice string
         send_messages: List[discord.ApplicationCommandOptionChoice] = []
         for i in messages:
-            name = f"<#{i['channel_id']}>: {i['text']}"
+            channel: Optional[discord.TextChannel]
+            channel = self.bot.get_channel(i['channel_id'])  # type: ignore - will only be a text channel
+            name = f"#{channel.name if channel else i['channel_id']}: {i['text']}"
             if len(name) > 100:
                 name = name[:-97] + "..."
             send_messages.append(discord.ApplicationCommandOptionChoice(
