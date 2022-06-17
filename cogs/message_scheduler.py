@@ -22,6 +22,108 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         self.message_schedule_send_loop.stop()
         return super().cog_unload()
 
+    async def add_repeating_events(
+            self,
+            db: vbu.Database,
+            filter_timestamp: dt,
+            filtered_ids: list):
+        """
+        Add new events to the database that are set to repeat.
+        """
+
+        # Add daily
+        await db.call(
+            """
+            INSERT INTO
+                scheduled_messages
+                (
+                    id,
+                    guild_id,
+                    channel_id,
+                    user_id,
+                    text,
+                    timestamp,
+                    repeat
+                )
+            SELECT
+                uuid_generate_v4(),
+                guild_id,
+                channel_id,
+                user_id,
+                text,
+                timestamp + INTERVAL '1 day'
+            WHERE
+                timestamp >= $1
+            AND
+                timestamp < $2
+            AND
+                NOT (id=ANY($3::UUID[]))
+            """,
+            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+        )
+
+        # Add monthly
+        await db.call(
+            """
+            INSERT INTO
+                scheduled_messages
+                (
+                    id,
+                    guild_id,
+                    channel_id,
+                    user_id,
+                    text,
+                    timestamp,
+                    repeat
+                )
+            SELECT
+                uuid_generate_v4(),
+                guild_id,
+                channel_id,
+                user_id,
+                text,
+                timestamp + INTERVAL '1 month'
+            WHERE
+                timestamp >= $1
+            AND
+                timestamp < $2
+            AND
+                NOT (id=ANY($3::UUID[]))
+            """,
+            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+        )
+
+        # Add yearly
+        await db.call(
+            """
+            INSERT INTO
+                scheduled_messages
+                (
+                    id,
+                    guild_id,
+                    channel_id,
+                    user_id,
+                    text,
+                    timestamp,
+                    repeat
+                )
+            SELECT
+                uuid_generate_v4(),
+                guild_id,
+                channel_id,
+                user_id,
+                text,
+                timestamp + INTERVAL '1 year'
+            WHERE
+                timestamp >= $1
+            AND
+                timestamp < $2
+            AND
+                NOT (id=ANY($3::UUID[]))
+            """,
+            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+        )
+
     @tasks.loop(seconds=10)
     async def message_schedule_send_loop(self):
         """
@@ -47,6 +149,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 """,
                 now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
             )
+            await self.add_repeating_events(db, now, self.sent_ids)
 
         # Send them
         for i in messages:
