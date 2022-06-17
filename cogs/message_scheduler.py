@@ -316,8 +316,30 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         except:
             message_is_id = False
 
-        # See where we're getting it from the database
-        return await ctx.interaction.response.send_message("Not yet implemented.")
+        # Only delete if we have an ID
+        if not message_is_id:
+            return await ctx.interaction.response.send_message(
+                "I can only delete scheduled messages by their ID."
+            )
+
+        # Delete from database
+        await ctx.interaction.response.defer()
+        async with vbu.Database() as db:
+            await db.call("""
+                DELETE FROM
+                    scheduled_messages
+                WHERE
+                    id=$1
+                AND
+                    guild_id=$2
+                RETURNING
+                    *
+                """,
+                message, ctx.guild.id,
+            )
+
+        # And done
+        return await ctx.interaction.followup.send("Deleted message :)")
 
     @schedule_delete.autocomplete
     async def schedule_delete_message_autocomplete(
