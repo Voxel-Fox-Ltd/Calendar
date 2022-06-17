@@ -76,6 +76,10 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             if i[0] < dt.utcnow() - timedelta(minutes=10)
         ]
 
+    @message_schedule_send_loop.before_loop
+    async def before_message_schedule_send_loop(self):
+        await self.bot.wait_until_ready()
+
     @commands.group(
         application_command_meta=commands.ApplicationCommandMeta(),
     )
