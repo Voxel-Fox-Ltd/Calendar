@@ -448,7 +448,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # And respond
         if not messages:
             return await interaction.followup.send(
-                "You have no scheduled messages for that month.",
+                f"You have no scheduled messages for {MONTH_OPTIONS[month - 1].name}.",
             )
         message_strings: List[str] = list()
         for i in messages:
