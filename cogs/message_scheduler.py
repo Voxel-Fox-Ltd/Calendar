@@ -635,8 +635,13 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         for i in messages:
             timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
             text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp} (`{i['id']}`): {i['text'][:50]}"
+            if i['timestamp'] < dt.utcnow():
+                text = f"~~{text}~~"
             message_strings.append(text)
-        return await interaction.followup.send("\n".join(message_strings))
+        return await interaction.followup.send(
+            "\n".join(message_strings),
+            allowed_mentions=discord.AllowedMentions.none(),
+        )
 
     async def send_schedule_list_message(self, ctx: Union[GuildContext, discord.Interaction]):
         """
