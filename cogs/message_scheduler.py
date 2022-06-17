@@ -60,9 +60,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     i['text'],
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
-                self.logger.info("Sent message %s to %s" % (i['text'], channel.id))
+                self.logger.info("Sent message '%s' to %s" % (i['text'], channel.id))
             except discord.HTTPException:
-                self.logger.info("Failed to send message %s to %s" % (i['text'], channel.id))
+                self.logger.info("Failed to send message '%s' to %s" % (i['text'], channel.id))
 
         # Cache the IDs so as to not resend
         for i in messages:
@@ -71,13 +71,15 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 i['id'],
             )
             self.sent_ids.append(new_item)
+        self.logger.info("Sent message cache: %s" % self.sent_ids)
 
         # And delete old IDs
         self.sent_ids = [
             i
             for i in self.sent_ids
-            if i[0] < dt.utcnow() - timedelta(minutes=10)
+            if i[0] < dt.utcnow() - timedelta(minutes=2)
         ]
+        self.logger.info("Now filtered message cache: %s" % self.sent_ids)
 
     @message_schedule_send_loop.before_loop
     async def before_message_schedule_send_loop(self):
