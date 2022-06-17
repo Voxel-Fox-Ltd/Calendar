@@ -244,7 +244,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     id
                 """,
                 ctx.guild.id, channel.id, ctx.author.id, message,
-                send_time,
+                discord.utils.naive_dt(send_time),
             )
         created = created_rows[0]
 
