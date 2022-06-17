@@ -7,8 +7,8 @@ from discord.ext import commands, tasks, vbu
 import pytz
 import pytimeparse
 
-from cogs.utils import MONTH_OPTIONS
 from cogs.utils.types import GuildContext, ScheduledMessageDict
+from cogs.utils.values import MONTH_OPTIONS, TIMEZONE_OPTIONS
 
 
 class MessageScheduler(vbu.Cog[vbu.Bot]):
@@ -182,11 +182,18 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 ),
                 discord.ApplicationCommandOption(
                     name="channel",
-                    description="The channel you want to send the message in.",
+                    description="The channel you want to send the message in. Defaults to here.",
                     type=discord.ApplicationCommandOptionType.channel,
                     channel_types=[
                         discord.ChannelType.text,
                     ],
+                ),
+                discord.ApplicationCommandOption(
+                    name="timezone",
+                    description="The timezone that you're giving a time in. Defaults to UTC.",
+                    type=discord.ApplicationCommandOptionType.string,
+                    choices=list(TIMEZONE_OPTIONS),
+                    required=False,
                 ),
             ],
         ),
@@ -199,20 +206,21 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             day: int,
             hour: int,
             minute: int,
-            channel: discord.TextChannel):
+            channel: discord.TextChannel,
+            timezone: str = "UTC"):
         """
         Schedule a message to be sent in a given channel at a specific time.
         """
 
         # Build a time
-        now = dt.utcnow().astimezone(pytz.timezone("EST"))
+        now = dt.utcnow().astimezone(pytz.timezone(timezone))
         send_time = dt(
             year=now.year,
             month=month,
             day=day,
             hour=hour,
             minute=minute,
-            tzinfo=pytz.timezone("EST"),
+            tzinfo=pytz.timezone(timezone),
         )
         if send_time < now:
             send_time = send_time.replace(year=send_time.year + 1)

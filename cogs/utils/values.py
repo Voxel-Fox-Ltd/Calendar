@@ -5,6 +5,7 @@ import discord
 
 __all__ = (
     'MONTH_OPTIONS',
+    'TIMEZONE_OPTIONS',
 )
 
 
@@ -21,6 +22,16 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
     discord.ApplicationCommandOptionChoice(name="October", value=10),
     discord.ApplicationCommandOptionChoice(name="November", value=11),
     discord.ApplicationCommandOptionChoice(name="December", value=12),
+)
+
+
+TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
+    discord.ApplicationCommandOptionChoice(name="UTC"),
+    discord.ApplicationCommandOptionChoice(name="GMT"),
+    discord.ApplicationCommandOptionChoice(name="EST"),
+    discord.ApplicationCommandOptionChoice(name="CST"),
+    discord.ApplicationCommandOptionChoice(name="MST"),
+    discord.ApplicationCommandOptionChoice(name="PST"),
 )
 
 
