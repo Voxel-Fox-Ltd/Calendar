@@ -47,7 +47,6 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 """,
                 now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
             )
-        self.logger.info(messages)
 
         # Send them
         for i in messages:
@@ -71,7 +70,6 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 i['id'],
             )
             self.sent_ids.append(new_item)
-        self.logger.info("Sent message cache: %s" % self.sent_ids)
 
         # And delete old IDs
         self.sent_ids = [
@@ -79,7 +77,6 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             for i in self.sent_ids
             if i[0] > dt.utcnow() - timedelta(minutes=2)
         ]
-        self.logger.info("Now filtered message cache: %s" % self.sent_ids)
 
     @message_schedule_send_loop.before_loop
     async def before_message_schedule_send_loop(self):
@@ -295,8 +292,6 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         """
         Delete a scheduled message.
         """
-
-        self.logger.info(message)
 
         # See if the message is a UUID
         message_is_id = True
