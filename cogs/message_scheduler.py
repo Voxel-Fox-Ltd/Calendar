@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 from datetime import datetime as dt, timedelta
 import uuid
 
@@ -383,17 +383,22 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     description="The month that you want to look at.",
                     type=discord.ApplicationCommandOptionType.integer,
                     choices=list(MONTH_OPTIONS),
+                    required=False,
                 ),
             ],
         ),
     )
     async def schedule_list(
             self,
-            ctx: GuildContext,
-            month: Optional[int]):
+            ctx: Union[GuildContext, discord.Interaction],
+            month: Optional[int] = None):
         """
         Check a list of scheduled messages.
         """
+
+        # See if a month was specified
+        if month is None:
+            return await self.send_schedule_list_message(ctx)
 
         # Get times
         now = dt.utcnow()
@@ -414,8 +419,15 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         if start > end:
             end = end.replace(year=end.year + 1)
 
+        # Work out what our context is
+        interaction: discord.Interaction
+        if isinstance(ctx, commands.Context):
+            interaction = ctx.interaction
+        else:
+            interaction = ctx
+
         # Get the list of events
-        await ctx.interaction.response.defer()
+        await interaction.response.defer()
         async with vbu.Database() as db:
             messages: List[ScheduledMessageDict] = await db.call(
                 """
@@ -430,12 +442,12 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 AND
                     timestamp < $3
                 """,
-                ctx.guild.id, start, end,
+                interaction.guild_id, start, end,
             )
 
         # And respond
         if not messages:
-            return await ctx.interaction.followup.send(
+            return await interaction.followup.send(
                 "You have no scheduled messages for that month.",
             )
         message_strings: List[str] = list()
@@ -443,7 +455,49 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
             text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp}: {i['text'][:50]}"
             message_strings.append(text)
-        return await ctx.interaction.followup.send("\n".join(message_strings))
+        return await interaction.followup.send("\n".join(message_strings))
+
+    async def send_schedule_list_message(self, ctx: Union[GuildContext, discord.Interaction]):
+        """
+        Send a list of buttons that the user can click to look at the schedule.
+        """
+
+        # Work out what our interaction is
+        interaction: discord.Interaction
+        if isinstance(ctx, commands.Context):
+            interaction = ctx.interaction
+        else:
+            interaction = ctx
+
+        # Send buttons
+        return await interaction.response.send_message(
+            "Click any month to see the scheduled messages.",
+            components=discord.ui.MessageComponents.add_buttons_with_rows(
+                *[
+                    discord.ui.Button(label=i.name, custom_id=f"SCHEDULE_LIST_COMMAND {i.value}")
+                    for i in MONTH_OPTIONS
+                ]
+            )
+        )
+
+    @vbu.Cog.listener("component_interaction")
+    async def schedule_list_command_button(
+            self,
+            interaction: discord.Interaction):
+        """
+        Waits for schedule list commands' buttons being pressed, and
+        runs the command accordingly.
+        """
+
+        # Make sure the button is correct
+        if not interaction.custom_id.startswith("SCHEDULE_LIST_COMMAND"):
+            return
+
+        # And run command
+        await self.schedule_list(
+            interaction,
+            int(interaction.custom_id.split(" ")[-1]),
+        )
 
 def setup(bot: vbu.Bot):
     x = MessageScheduler(bot)
