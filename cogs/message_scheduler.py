@@ -39,11 +39,11 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 FROM
                     scheduled_messages
                 WHERE
-                    timestamp > $1
+                    timestamp >= $1
                 AND
                     timestamp < $2
                 AND
-                    NOT (id=ANY($3))
+                    NOT (id=ANY($3::UUID[]))
                 """,
                 now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
             )
