@@ -526,13 +526,12 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # Work out what the user is saying
         options = interaction.options
         while options and options[0].type == discord.ApplicationCommandOptionType.subcommand:
-            options = options.options[0]
+            options = options[0].options
 
         # Get all the data
         messages: List[ScheduledMessageDict]
         async with vbu.Database() as db:
             given_str: str = options[0].value  # type: ignore
-            self.logger.info(interaction.options)
             if given_str:
                 messages = await db.call(
                     """
@@ -543,7 +542,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     WHERE
                         guild_id=$1
                     AND
-                        text LIKE CONCAT('%', $2, '%')
+                        text LIKE '%' || $2::TEXT || '%'
                     AND
                         timestamp > TIMEZONE('UTC', NOW())
                     ORDER BY
