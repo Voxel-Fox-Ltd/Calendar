@@ -77,7 +77,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         self.sent_ids = [
             i
             for i in self.sent_ids
-            if i[0] < dt.utcnow() - timedelta(minutes=2)
+            if i[0] > dt.utcnow() - timedelta(minutes=2)
         ]
         self.logger.info("Now filtered message cache: %s" % self.sent_ids)
 
