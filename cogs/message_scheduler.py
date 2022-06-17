@@ -206,13 +206,15 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         # Build a time
         now = dt.utcnow().astimezone(pytz.timezone("EST"))
         send_time = dt(
-            year=now.year if month > now.month else now.year + 1,
+            year=now.year,
             month=month,
             day=day,
             hour=hour,
             minute=minute,
             tzinfo=pytz.timezone("EST"),
         )
+        if send_time < now:
+            send_time = send_time.replace(year=send_time.year + 1)
 
         # Save it to db
         await ctx.interaction.response.defer()
