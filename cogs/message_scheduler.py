@@ -51,7 +51,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 channel_id,
                 user_id,
                 text,
-                timestamp + INTERVAL '1 day'
+                timestamp + INTERVAL '1 day',
+                repeat
             FROM
                 scheduled_messages
             WHERE
@@ -84,7 +85,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 channel_id,
                 user_id,
                 text,
-                timestamp + INTERVAL '1 month'
+                timestamp + INTERVAL '1 month',
+                repeat
             FROM
                 scheduled_messages
             WHERE
@@ -117,7 +119,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 channel_id,
                 user_id,
                 text,
-                timestamp + INTERVAL '1 year'
+                timestamp + INTERVAL '1 year',
+                repeat
             FROM
                 scheduled_messages
             WHERE
