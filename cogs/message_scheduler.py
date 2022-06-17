@@ -521,19 +521,37 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
 
         # Get all the data
         async with vbu.Database() as db:
-            messages: List[ScheduledMessageDict] = await db.call(
-                """
-                SELECT
-                    *
-                FROM
-                    scheduled_messages
-                WHERE
-                    guild_id=$1
-                ORDER BY
-                    timestamp DESC
-                """,
-                ctx.guild.id,
-            )
+            given_str: str = interaction.options[0].value  # type: ignore
+            if given_str:
+                messages: List[ScheduledMessageDict] = await db.call(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        scheduled_messages
+                    WHERE
+                        guild_id=$1
+                    AND
+                        text LIKE CONCAT('%', $2, '%')
+                    ORDER BY
+                        timestamp DESC
+                    """,
+                    ctx.guild.id, given_str.replace("%", "\\%"),
+                )
+            else:
+                messages: List[ScheduledMessageDict] = await db.call(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        scheduled_messages
+                    WHERE
+                        guild_id=$1
+                    ORDER BY
+                        timestamp DESC
+                    """,
+                    ctx.guild.id,
+                )
 
         # Format into a nice string
         send_messages: List[discord.ApplicationCommandOptionChoice] = []
