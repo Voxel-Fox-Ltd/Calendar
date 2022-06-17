@@ -374,6 +374,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     name="month",
                     description="The month that you want to look at.",
                     type=discord.ApplicationCommandOptionType.integer,
+                    choices=list(MONTH_OPTIONS),
                 ),
             ],
         ),
@@ -425,10 +426,11 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             return await ctx.interaction.followup.send(
                 "You have no scheduled messages for that month.",
             )
-        message_strings: List[str] = [
-            f"\N{BULLET} <#{i['channel_id']}>: {i['text'][:50]}"
-            for i in messages
-        ]
+        message_strings: List[str] = list()
+        for i in messages:
+            timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
+            text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp}: {i['text'][:50]}"
+            message_strings.append(text)
         return await ctx.interaction.followup.send("\n".join(message_strings))
 
 def setup(bot: vbu.Bot):
