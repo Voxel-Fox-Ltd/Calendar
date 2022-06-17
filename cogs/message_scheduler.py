@@ -448,6 +448,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     repeat=$2
                 WHERE
                     id=$1
+                AND
+                    timestamp > TIMEZONE('UTC', NOW())
                 """,
                 id, repeat if repeat != "none" else None,
             )
@@ -500,6 +502,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                     id=$1
                 AND
                     guild_id=$2
+                AND
+                    timestamp > TIMEZONE('UTC', NOW())
                 RETURNING
                     *
                 """,
@@ -520,10 +524,12 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         """
 
         # Get all the data
+        messages: List[ScheduledMessageDict]
         async with vbu.Database() as db:
             given_str: str = interaction.options[0].value  # type: ignore
             if given_str:
-                messages: List[ScheduledMessageDict] = await db.call(
+                self.logger.info(given_str)
+                messages = await db.call(
                     """
                     SELECT
                         *
@@ -533,13 +539,15 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                         guild_id=$1
                     AND
                         text LIKE CONCAT('%', $2, '%')
+                    AND
+                        timestamp > TIMEZONE('UTC', NOW())
                     ORDER BY
                         timestamp DESC
                     """,
                     ctx.guild.id, given_str.replace("%", "\\%"),
                 )
             else:
-                messages: List[ScheduledMessageDict] = await db.call(
+                messages = await db.call(
                     """
                     SELECT
                         *
@@ -547,6 +555,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                         scheduled_messages
                     WHERE
                         guild_id=$1
+                    AND
+                        timestamp > TIMEZONE('UTC', NOW())
                     ORDER BY
                         timestamp DESC
                     """,
