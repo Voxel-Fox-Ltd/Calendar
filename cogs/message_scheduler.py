@@ -402,9 +402,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
 
         # Get times
         now = dt.utcnow()
-        now_plus_one_month = now.replace(
-            year=now.year if now.month < 12 else now.year + 1,
-            month=now.month + 1 if now.month < 12 else 1,
+        now_minus_one_month = now.replace(
+            year=now.year if now.month > 1 else now.year 1 1,
+            month=now.month - 1 if now.month > 1 else 12,
         )
         if not month:
             month = now.month
@@ -413,7 +413,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             month,
             1,
         )
-        if start < now_plus_one_month:
+        if start < now_minus_one_month:
             start = start.replace(year=start.year + 1)
         end = dt(
             now.year if month < 12 else now.year + 1,
