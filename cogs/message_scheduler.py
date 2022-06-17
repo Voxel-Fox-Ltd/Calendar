@@ -52,6 +52,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 user_id,
                 text,
                 timestamp + INTERVAL '1 day'
+            FROM
+                scheduled_messages
             WHERE
                 timestamp >= $1
             AND
@@ -83,6 +85,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 user_id,
                 text,
                 timestamp + INTERVAL '1 month'
+            FROM
+                scheduled_messages
             WHERE
                 timestamp >= $1
             AND
@@ -114,6 +118,8 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
                 user_id,
                 text,
                 timestamp + INTERVAL '1 year'
+            FROM
+                scheduled_messages
             WHERE
                 timestamp >= $1
             AND
