@@ -1,14 +1,80 @@
-from typing import List
-from datetime import datetime as dt
+from typing import TYPE_CHECKING, List, Tuple
+from datetime import datetime as dt, timedelta
 
 import discord
-from discord.ext import commands, vbu
+from discord.ext import commands, tasks, vbu
 import pytz
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
 
+if TYPE_CHECKING:
+    import uuid
+
 
 class MessageScheduler(vbu.Cog[vbu.Bot]):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sent_ids: List[Tuple[dt, uuid.UUID]] = list()
+        self.message_schedule_send_loop.start()
+
+    def cog_unload(self) -> None:
+        self.message_schedule_send_loop.stop()
+        return super().cog_unload()
+
+    @tasks.loop(seconds=10)
+    async def message_schedule_send_loop(self):
+        """
+        Send the scheduled messages.
+        """
+
+        # Get our scheduled messages to be sent
+        now = dt.utcnow().replace(second=0, microsecond=0)
+        async with vbu.Database() as db:
+            messages: List[ScheduledMessageDict] = await db.call(
+                """
+                SELECT
+                    *
+                FROM
+                    scheduled_messages
+                WHERE
+                    timestamp > $1
+                AND
+                    timestamp < $2
+                AND
+                    NOT (id=ANY($3))
+                """,
+                now, now + timedelta(minutes=1), [i[1] for i in self.sent_ids],
+            )
+
+        # Send them
+        for i in messages:
+            channel = self.bot.get_partial_messageable(
+                i['channel_id'],
+                type=discord.ChannelType.text,
+            )
+            try:
+                await channel.send(
+                    i['text'],
+                    allowed_mentions=discord.AllowedMentions.none(),
+                )
+            except discord.HTTPException:
+                pass
+
+        # Cache the IDs so as to not resend
+        for i in messages:
+            new_item = (
+                dt.utcnow(),
+                i['id'],
+            )
+            self.sent_ids.append(new_item)
+
+        # And delete old IDs
+        self.sent_ids = [
+            i
+            for i in self.sent_ids
+            if i[0] < dt.utcnow() - timedelta(minutes=10)
+        ]
 
     @commands.group(
         application_command_meta=commands.ApplicationCommandMeta(),
@@ -16,8 +82,52 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
     async def schedule(self, _):
         ...
 
-    @schedule.command(
+    @schedule.group(
         name="add",
+        application_command_meta=commands.ApplicationCommandMeta(),
+    )
+    async def schedule_add(self, _):
+        ...
+
+    @schedule_add.command(
+        name="in",
+        application_command_meta=commands.ApplicationCommandMeta(
+            options=[
+                discord.ApplicationCommandOption(
+                    name="message",
+                    description="The message text that you want to schedule.",
+                    type=discord.ApplicationCommandOptionType.string,
+                ),
+                discord.ApplicationCommandOption(
+                    name="future",
+                    description="How far in the future you want the message to be sent (eg \"1 hour 5 minutes\").",
+                    type=discord.ApplicationCommandOptionType.string,
+                ),
+                discord.ApplicationCommandOption(
+                    name="channel",
+                    description="The channel you want to send the message in.",
+                    type=discord.ApplicationCommandOptionType.channel,
+                    channel_types=[
+                        discord.ChannelType.text,
+                    ],
+                ),
+            ],
+        ),
+    )
+    async def schedule_add_in(
+            self,
+            ctx: GuildContext,
+            message: str,
+            future: str,
+            channel: discord.TextChannel):
+        """
+        Schedule a message to be sent in a given channel at a point in the future.
+        """
+
+        await ctx.send("Not yet implemented.")
+
+    @schedule_add.command(
+        name="at",
         application_command_meta=commands.ApplicationCommandMeta(
             options=[
                 discord.ApplicationCommandOption(
@@ -76,7 +186,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             ],
         ),
     )
-    async def schedule_add(
+    async def schedule_add_at(
             self,
             ctx: GuildContext,
             message: str,
@@ -86,7 +196,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             minute: int,
             channel: discord.TextChannel):
         """
-        Schedule a message to be sent in a given channel.
+        Schedule a message to be sent in a given channel at a specific time.
         """
 
         # Build a time
