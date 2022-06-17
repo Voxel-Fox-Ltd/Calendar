@@ -1,7 +1,11 @@
+from typing import List
 from datetime import datetime as dt
 
 import discord
 from discord.ext import commands, vbu
+import pytz
+
+from cogs.utils.types import GuildContext, ScheduledMessageDict
 
 
 class MessageScheduler(vbu.Cog[vbu.Bot]):
@@ -74,7 +78,7 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
     )
     async def schedule_add(
             self,
-            ctx: vbu.SlashContext,
+            ctx: GuildContext,
             message: str,
             month: int,
             day: int,
@@ -86,20 +90,57 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         """
 
         # Build a time
-        now = dt.utcnow()
+        now = dt.utcnow().astimezone(pytz.timezone("EST"))
         send_time = dt(
             year=now.year if month > now.month else now.year + 1,
             month=month,
             day=day,
             hour=hour,
             minute=minute,
+            tzinfo=pytz.timezone("EST"),
         )
 
-        # Build a location
+        # Save it to db
+        await ctx.interaction.response.defer()
+        async with vbu.Database() as db:
+            created_rows: List[ScheduledMessageDict] = await db.call(
+                """
+                INSERT INTO
+                    scheduled_messages
+                    (
+                        id,
+                        guild_id,
+                        channel_id,
+                        user_id,
+                        text,
+                        timestamp,
+                        repeat
+                    )
+                VALUES
+                    (
+                        generate_uuid_v4(),  -- id
+                        $1,  -- guild_id
+                        $2,  -- channel_id
+                        $3,  -- user_id
+                        $4,  -- text
+                        $5,  -- timestamp
+                        NULL  -- repeat
+                    )
+                RETURNING
+                    id
+                """,
+                ctx.guild.id, channel.id, ctx.author.id, message,
+                send_time,
+            )
+        created = created_rows[0]
+
+        # Tell the user it's done
         future = discord.utils.format_dt(send_time, style="R")
-        await ctx.interaction.response.send_message(
-            f"This message would be sent into {channel.mention} {future}."
+        response = (
+            f"Scheduled your message to be sent into {channel.mention} "
+            f"{future} with ID `{created['id']!s}` :)"
         )
+        await ctx.interaction.followup.send(response)
 
 
 def setup(bot: vbu.Bot):

@@ -1,3 +1,6 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+
 CREATE TABLE IF NOT EXISTS guild_settings(
     guild_id BIGINT PRIMARY KEY,
     prefix TEXT,
@@ -60,7 +63,17 @@ CREATE TABLE IF NOT EXISTS guild_events(
     guild_id BIGINT NOT NULL,  -- the ID of the guild it's attached to
     user_id BIGINT NOT NULL,  -- the ID of the user who added this event
     name TEXT NOT NULL,  -- the name of the event
-    month INTEGER NOT NULL,  -- the month the event occurs on
-    day INTEGER NOT NULL,  -- the day the event occurs on
+    timestamp TIMESTAMP NOT NULL,  -- when the event is initially to start
     repeat repeat_time  -- how often the event repeats
+);
+
+
+CREATE TABLE IF NOT EXISTS scheduled_messages(
+    id UUID NOT NULL PRIMARY KEY,  -- the ID of the event
+    guild_id BIGINT NOT NULL,  -- the ID of the guild it's attached to
+    channel_id BIGINT NOT NULL,  -- the ID of the channel it's to be sent to
+    user_id BIGINT NOT NULL,  -- the ID of the user who added this event
+    text TEXT NOT NULL,  -- the text to be sent
+    timestamp TIMESTAMP NOT NULL,  -- when the message is initially to be sent
+    repeat repeat_time  -- how often the message should be resent
 );

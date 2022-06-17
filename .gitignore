@@ -1,3 +1,6 @@
 __pycache__/
 config/config.toml
 config/website.toml
+_*.py
+!__init__.py
+!__main__.py
