@@ -11,7 +11,7 @@ from cogs.utils.types import GuildContext, ScheduledMessageDict
 from cogs.utils.values import MONTH_OPTIONS, REPEAT_OPTIONS_WITH_NONE, TIMEZONE_OPTIONS
 
 
-class MessageScheduler(vbu.Cog[vbu.Bot]):
+class MessageManager(vbu.Cog[vbu.Bot]):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -352,7 +352,10 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             message: str,
             send_time: dt,
             channel: discord.TextChannel):
-        ...
+        """
+        Save a scheduled message given a corrected time with a timestamp,
+        and a location to save it to.
+        """
 
         # Save it to db
         await ctx.interaction.response.defer()
@@ -675,7 +678,9 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
             allowed_mentions=discord.AllowedMentions.none(),
         )
 
-    async def send_schedule_list_message(self, ctx: Union[GuildContext, discord.Interaction]):
+    async def send_schedule_list_message(
+            self,
+            ctx: Union[GuildContext, discord.Interaction]):
         """
         Send a list of buttons that the user can click to look at the schedule.
         """
@@ -718,5 +723,5 @@ class MessageScheduler(vbu.Cog[vbu.Bot]):
         )
 
 def setup(bot: vbu.Bot):
-    x = MessageScheduler(bot)
+    x = MessageManager(bot)
     bot.add_cog(x)
