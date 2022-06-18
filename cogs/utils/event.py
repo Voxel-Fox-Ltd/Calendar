@@ -91,10 +91,13 @@ class Event:
             If the given event ID is not a UUID.
         """
 
-        try:
-            self._id: Optional[UUID] = id if isinstance(id, UUID) else UUID(id)
-        except ValueError as e:
-            raise ValueError("Failed to convert given event ID to a UUID") from e
+        if id is None:
+            self._id = None
+        else:
+            try:
+                self._id: Optional[UUID] = id if isinstance(id, UUID) else UUID(id)
+            except ValueError as e:
+                raise ValueError("Failed to convert given event ID to a UUID") from e
         self.guild_id: int = guild_id
         self.user_id: int = user_id
         self.name: str = name
