@@ -337,7 +337,8 @@ class Event:
             assert ctx.guild
             event = await cls.fetch_by_name(ctx.guild, value)
         if event is None:
-            text = vbu.translation(ctx, "main").gettext("There's no event with the name **{name}**.")
+            tra = vbu.translation(ctx, "main")
+            text = tra.gettext("There's no event with the name **{name}**.")
             raise commands.BadArgument(text.format(name=value))
         return event
 
@@ -486,7 +487,7 @@ class Event:
 
             output_lines.append(f"**{group['day']}**")
             for event in group['events']:
-                output_lines.append(f"\N{BULLET} {event.name}")
+                output_lines.append(f"\u2022 {event.name}")
 
         # And return
         return "\n".join(output_lines)

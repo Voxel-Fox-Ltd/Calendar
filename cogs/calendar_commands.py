@@ -78,9 +78,9 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         events.sort(key=operator.attrgetter("timestamp"))
         for e in events:
             if len(e.name) > 50:
-                event_strings.append(f"\N{BULLET} ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}...")
+                event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}...")
             else:
-                event_strings.append(f"\N{BULLET} ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}")
+                event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}")
         await ctx.interaction.followup.send(
             "\n".join(event_strings),
             allowed_mentions=discord.AllowedMentions.none(),

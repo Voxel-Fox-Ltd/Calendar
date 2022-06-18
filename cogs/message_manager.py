@@ -694,7 +694,7 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         message_strings: List[str] = list()
         for i in messages:
             timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
-            text = tra.gettext("\N{BULLET} {channel} at {timestamp} (`{event_id}`): {event_message}")
+            text = tra.gettext("\u2022 {channel} at {timestamp} (`{event_id}`): {event_message}")
             text = text.format(
                 channel=f"<#{i['channel_id']}>",
                 timestamp=timestamp,
