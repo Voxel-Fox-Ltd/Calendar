@@ -62,6 +62,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         # If they didn't give a month, put out a list of months
         if month is None:
             tra = vbu.translation(ctx, "main")
+            # TRANSLATORS: Text appearing in a message above select buttons.
             text = tra.gettext("Click any month to see the events.")
             return await send_schedule_list_message(
                 ctx,
@@ -197,6 +198,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             )
 
         # And tell them it's done
+        # TRANSLATORS: Text appearing after an auto-updating calendar has been generated.
         text = vbu.translation(ctx, "main").gettext("Your guild calendar has been created.")
         await ctx.interaction.followup.send(text)
         self.bot.dispatch("calendar_update", ctx.guild)

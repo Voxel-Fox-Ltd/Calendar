@@ -20,18 +20,102 @@ __all__ = (
 
 
 MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
-    discord.ApplicationCommandOptionChoice(name="January", value=1),
-    discord.ApplicationCommandOptionChoice(name="February", value=2),
-    discord.ApplicationCommandOptionChoice(name="March", value=3),
-    discord.ApplicationCommandOptionChoice(name="April", value=4),
-    discord.ApplicationCommandOptionChoice(name="May", value=5),
-    discord.ApplicationCommandOptionChoice(name="June", value=6),
-    discord.ApplicationCommandOptionChoice(name="July", value=7),
-    discord.ApplicationCommandOptionChoice(name="August", value=8),
-    discord.ApplicationCommandOptionChoice(name="September", value=9),
-    discord.ApplicationCommandOptionChoice(name="October", value=10),
-    discord.ApplicationCommandOptionChoice(name="November", value=11),
-    discord.ApplicationCommandOptionChoice(name="December", value=12),
+    discord.ApplicationCommandOptionChoice(
+        name="January",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("January")
+            for i in ["en"]
+        },
+        value=1
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="February",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("February")
+            for i in ["en"]
+        },
+        value=2
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="March",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("March")
+            for i in ["en"]
+        },
+        value=3
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="April",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("April")
+            for i in ["en"]
+        },
+        value=4
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="May",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("May")
+            for i in ["en"]
+        },
+        value=5
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="June",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("June")
+            for i in ["en"]
+        },
+        value=6
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="July",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("July")
+            for i in ["en"]
+        },
+        value=7
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="August",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("August")
+            for i in ["en"]
+        },
+        value=8
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="September",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("September")
+            for i in ["en"]
+        },
+        value=9
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="October",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("October")
+            for i in ["en"]
+        },
+        value=10,
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="November",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("November")
+            for i in ["en"]
+        },
+        value=11,
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="December",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("December")
+            for i in ["en"]
+        },
+        value=12,
+    ),
 )
 
 async def send_schedule_list_message(
@@ -90,14 +174,46 @@ def get_timezone_command_option(**kwargs) -> discord.ApplicationCommandOption:
 
 
 REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
-    discord.ApplicationCommandOptionChoice(name="Daily", value="daily"),
-    discord.ApplicationCommandOptionChoice(name="Monthly", value="monthly"),
-    discord.ApplicationCommandOptionChoice(name="Yearly", value="yearly"),
+    discord.ApplicationCommandOptionChoice(
+        name="Daily",
+        name_localizations={
+            # TRANSLATORS: When describing how often an event occurs.
+            i: vbu.translation(i, "main").gettext("Daily")
+            for i in ["en"]
+        },
+        value="daily",
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Monthly",
+        name_localizations={
+            # TRANSLATORS: When describing how often an event occurs.
+            i: vbu.translation(i, "main").gettext("Monthly")
+            for i in ["en"]
+        },
+        value="monthly",
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Yearly",
+        name_localizations={
+            # TRANSLATORS: When describing how often an event occurs.
+            i: vbu.translation(i, "main").gettext("Yearly")
+            for i in ["en"]
+        },
+        value="yearly",
+    ),
 )
 
 
 REPEAT_OPTIONS_WITH_NONE: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
-    discord.ApplicationCommandOptionChoice(name="None", value="none"),
+    discord.ApplicationCommandOptionChoice(
+        name="None",
+        name_localizations={
+            # TRANSLATORS: When describing how often an event occurs.
+            i: vbu.translation(i, "main").gettext("None")
+            for i in ["en"]
+        },
+        value="none",
+    ),
     *REPEAT_OPTIONS,
 )
 

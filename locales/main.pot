@@ -1,7 +1,8 @@
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-12 04:29+0100\n"
+"POT-Creation-Date: 2022-06-18 05:19+0100\n"
 "PO-Revision-Date: 2022-05-12 04:29+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -14,90 +15,165 @@ msgstr ""
 "X-Poedit-Basepath: ../cogs\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: calendar_commands.py:60
+#. TRANSLATORS: Text appearing in a message above select buttons.
+#: calendar_commands.py:66
+msgid "Click any month to see the events."
+msgstr ""
+
+#: calendar_commands.py:90
 #, python-brace-format
 msgid "There are no events in {month}."
 msgstr ""
 
-#: calendar_commands.py:130
+#. TRANSLATORS: Text appearing after an auto-updating calendar has been generated.
+#: calendar_commands.py:202
 msgid "Your guild calendar has been created."
 msgstr ""
 
-#: event_manangement_commands.py:70
+#. TRANSLATORS: An error message when trying to make a duplicate event.
+#: event_manangement_commands.py:86
 #, python-brace-format
 msgid "There's already an event with the name **{name}**."
 msgstr ""
 
-#: event_manangement_commands.py:79
+#. TRANSLATORS: A message appearing after an event is created.
+#: event_manangement_commands.py:97
 msgid "Event saved!"
 msgstr ""
 
-#: event_manangement_commands.py:111
+#. TRANSLATORS: An "are you sure" message for deleting an event.
+#: event_manangement_commands.py:135
 #, python-brace-format
 msgid "Are you sure you want to delete the event **{name}**."
 msgstr ""
 
-#: event_manangement_commands.py:127
+#. TRANSLATORS: An error message for when a button is not pressed
+#. within a given amount of time.
+#: event_manangement_commands.py:153
 msgid "Timed out waiting for a response."
 msgstr ""
 
-#: event_manangement_commands.py:138
+#. TRANSLATORS: When a user decides to not delete an event
+#. after having been given an "are you sure" message.
+#: event_manangement_commands.py:166
 msgid "Alright, I won't delete that event."
 msgstr ""
 
-#: event_manangement_commands.py:147
+#. TRANSLATORS: A message appearing when a user decides
+#. to delete an event.
+#: event_manangement_commands.py:177
 msgid "Event deleted!"
 msgstr ""
 
-#: utils/__init__.py:9
+#. TRANSLATORS: An error appearing when a user-provided time
+#. is not in a valid format.
+#: message_manager.py:267
+msgid "Your given time is invalid."
+msgstr ""
+
+#. TRANSLATORS: An error message given when a user has
+#. given a non-ID argument to edit a scheduled message.
+#: message_manager.py:459
+msgid "I can only edit scheduled messages by their ID."
+msgstr ""
+
+#. TRANSLATORS: The message given when an event is edited.
+#: message_manager.py:481
+msgid "Event updated :)"
+msgstr ""
+
+#: message_manager.py:518
+msgid "I can only delete scheduled messages by their ID."
+msgstr ""
+
+#: message_manager.py:551
+msgid "Deleted scheduled message :)"
+msgstr ""
+
+#: message_manager.py:649
+msgid "Click any month to see the scheduled messages."
+msgstr ""
+
+#: message_manager.py:710
+#, python-brace-format
+msgid "There are no scheduled messages for {month_name} {year_number}."
+msgstr ""
+
+#: message_manager.py:720
+#, python-brace-format
+msgid "\\u2022 {channel} at {timestamp} (`{event_id}`): {event_message}"
+msgstr ""
+
+#. TRANSLATORS: Text appearing in an error message.
+#: utils/event.py:343
+#, python-brace-format
+msgid "There's no event with the name/ID **{name}**."
+msgstr ""
+
+#: utils/values.py:26
 msgid "January"
 msgstr ""
 
-#: utils/__init__.py:10
+#: utils/values.py:34
 msgid "February"
 msgstr ""
 
-#: utils/__init__.py:11
+#: utils/values.py:42
 msgid "March"
 msgstr ""
 
-#: utils/__init__.py:12
+#: utils/values.py:50
 msgid "April"
 msgstr ""
 
-#: utils/__init__.py:13
+#: utils/values.py:58
 msgid "May"
 msgstr ""
 
-#: utils/__init__.py:14
+#: utils/values.py:66
 msgid "June"
 msgstr ""
 
-#: utils/__init__.py:15
+#: utils/values.py:74
 msgid "July"
 msgstr ""
 
-#: utils/__init__.py:16
+#: utils/values.py:82
 msgid "August"
 msgstr ""
 
-#: utils/__init__.py:17
+#: utils/values.py:90
 msgid "September"
 msgstr ""
 
-#: utils/__init__.py:18
+#: utils/values.py:98
 msgid "October"
 msgstr ""
 
-#: utils/__init__.py:19
+#: utils/values.py:106
 msgid "November"
 msgstr ""
 
-#: utils/__init__.py:20
+#: utils/values.py:114
 msgid "December"
 msgstr ""
 
-#: utils/event.py:232
-#, python-brace-format
-msgid "There's no event with the name **{name}**."
+#. TRANSLATORS: When describing how often an event occurs.
+#: utils/values.py:181
+msgid "Daily"
+msgstr ""
+
+#. TRANSLATORS: When describing how often an event occurs.
+#: utils/values.py:190
+msgid "Monthly"
+msgstr ""
+
+#. TRANSLATORS: When describing how often an event occurs.
+#: utils/values.py:199
+msgid "Yearly"
+msgstr ""
+
+#. TRANSLATORS: When describing how often an event occurs.
+#: utils/values.py:212
+msgid "None"
 msgstr ""

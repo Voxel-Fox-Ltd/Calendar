@@ -262,6 +262,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         # Make sure it's a valid time
         future_seconds = pytimeparse.parse(future)
         if future_seconds is None or future_seconds < 0:
+            # TRANSLATORS: An error appearing when a user-provided time
+            # is not in a valid format.
             text = tra.gettext("Your given time is invalid.")
             return await ctx.interaction.response.send_message(text)
 
@@ -399,6 +401,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
 
         # Tell the user it's done
         future = discord.utils.format_dt(send_time, style="R")
+        # TRANSLATORS: A message sent after a user has successfully
+        # scheduled some text to be sent.
         response = tra.gettext((
             "Scheduled your message to be sent into {channel} "
             "{relative_time} with ID `{event_id}` :)"
@@ -450,6 +454,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
 
         # Only edit if we have an ID
         if not message_is_id:
+            # TRANSLATORS: An error message given when a user has
+            # given a non-ID argument to edit a scheduled message.
             text = tra.gettext("I can only edit scheduled messages by their ID.")
             return await ctx.interaction.response.send_message(text)
 
@@ -471,6 +477,7 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             )
 
         # And done
+        # TRANSLATORS: The message given when an event is edited.
         text = tra.gettext("Event updated :)")
         return await ctx.interaction.followup.send(text)
 
@@ -510,6 +517,17 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         if not message_is_id:
             text = tra.gettext("I can only delete scheduled messages by their ID.")
             return await ctx.interaction.response.send_message(text)
+
+        # As a side note, we're not asking if the user is sure in this
+        # case. I have no particular reason for this, other than
+        # I didn't set up a scheduled message class in advance as I did
+        # the event class, which made this a mildly harder process
+        # to achieve. After writing a scheduled message class
+        # to try and ease this process, I felt that it became immediately
+        # overengineered a solution, and abandoned the process.
+        # Thus, we're now in the limbo of having no "are you sure" message.
+        # Not inherently a bad thing, just an inconsistent thing.
+        # Oh well.
 
         # Delete from database
         await ctx.interaction.response.defer()

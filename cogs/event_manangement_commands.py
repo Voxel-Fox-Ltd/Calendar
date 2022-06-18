@@ -82,6 +82,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         await ctx.interaction.response.defer()
         current_event = await Event.fetch_by_name(ctx.guild, name)
         if current_event:
+            # TRANSLATORS: An error message when trying to make a duplicate event.
             text = tra.gettext("There's already an event with the name **{name}**.")
             return await ctx.interaction.followup.send(
                 text.format(name),
@@ -92,6 +93,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         await event.save()
 
         # And tell them it's done :)
+        # TRANSLATORS: A message appearing after an event is created.
         text = tra.gettext("Event saved!")
         await ctx.interaction.followup.send(text)
         self.bot.dispatch("calendar_update", ctx.guild)
@@ -129,6 +131,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             no=("No", f"{component_id} NO"),
         )
         tra = vbu.translation(ctx, "main")
+        # TRANSLATORS: An "are you sure" message for deleting an event.
         text = tra.gettext("Are you sure you want to delete the event **{name}**.")
         await ctx.interaction.followup.send(
             text.format(name=event.name),
@@ -145,6 +148,8 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             )
         except asyncio.TimeoutError:
             try:
+                # TRANSLATORS: An error message for when a button is not pressed
+                # within a given amount of time.
                 text = tra.gettext("Timed out waiting for a response.")
                 await ctx.interaction.edit_original_message(
                     content=text,
@@ -156,6 +161,8 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
 
         # See if they said no
         if interaction.custom_id.endswith("NO"):
+            # TRANSLATORS: When a user decides to not delete an event
+            # after having been given an "are you sure" message.
             text = tra.gettext("Alright, I won't delete that event.")
             return await interaction.response.edit_message(
                 content=text,
@@ -165,6 +172,8 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         # They agreed
         await interaction.response.defer_update()
         await event.delete()
+        # TRANSLATORS: A message appearing when a user decides
+        # to delete an event.
         text = tra.gettext("Event deleted!")
         return await interaction.edit_original_message(
             content=text,

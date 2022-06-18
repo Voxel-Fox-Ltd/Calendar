@@ -339,6 +339,7 @@ class Event:
             event = await cls.fetch_by_name(ctx.guild, value)
         if event is None:
             tra = vbu.translation(ctx, "main")
+            # TRANSLATORS: Text appearing in an error message.
             text = tra.gettext("There's no event with the name/ID **{name}**.")
             raise commands.BadArgument(text.format(name=value))
         return event
