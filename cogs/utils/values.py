@@ -46,7 +46,7 @@ def get_timezone_command_option(**kwargs) -> discord.ApplicationCommandOption:
         **kwargs,
         type=discord.ApplicationCommandOptionType.string,
         choices=list(TIMEZONE_OPTIONS),
-    ),
+    )
 
 
 REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
