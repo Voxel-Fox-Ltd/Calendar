@@ -14,7 +14,9 @@ from cogs.utils.values import MONTH_OPTIONS
 
 @dataclass
 class FakeContext:
-    """Context object used in the partial message converter."""
+    """
+    Context object used in the partial message converter.
+    """
 
     guild: Union[discord.Guild, Snowflake]
     bot: vbu.Bot
@@ -27,7 +29,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             guild_only=True,
         ),
     )
-    async def calendar(self, _: GuildContext):
+    async def calendar(self, _):
         ...
 
     @calendar.command(
@@ -38,7 +40,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                     name="month",
                     type=discord.ApplicationCommandOptionType.integer,
                     description="The month that you want to look at.",
-                    choices=list(MONTH_OPTIONS)
+                    choices=list(MONTH_OPTIONS),
                 ),
             ],
             guild_only=True,
@@ -142,8 +144,8 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                     )
                 VALUES
                     (
-                        $1,
-                        $2
+                        $1,  -- guild_id
+                        $2  -- calendar_message_url
                     )
                 ON CONFLICT
                     (guild_id)
@@ -207,8 +209,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                 type=discord.ChannelType.text,
             )
             message = channel.get_partial_message(message_id)
-        except Exception as e:
-            # self.logger.error("err in converter", exc_info=e)
+        except Exception:
             return
 
         # Try and edit the message
