@@ -36,7 +36,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             options=[
                 discord.ApplicationCommandOption(
                     name="month",
-                    type=discord.ApplicationCommandOptionType.string,
+                    type=discord.ApplicationCommandOptionType.integer,
                     description="The month that you want to look at.",
                     choices=list(MONTH_OPTIONS)
                 ),
