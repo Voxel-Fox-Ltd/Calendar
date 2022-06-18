@@ -5,6 +5,7 @@ from uuid import uuid4, UUID
 from enum import Enum
 from datetime import datetime as dt, timedelta
 
+import discord
 from discord.abc import Snowflake
 from discord.ext import commands, vbu
 
@@ -55,7 +56,7 @@ class Event:
         'guild_id',
         'user_id',
         'name',
-        'timestamp',
+        '_timestamp',
         'repeat',
     )
 
@@ -101,7 +102,7 @@ class Event:
         self.guild_id: int = guild_id
         self.user_id: int = user_id
         self.name: str = name
-        self.timestamp: dt = timestamp
+        self._timestamp: dt = timestamp
         self.repeat: Optional[RepeatTime]
         if repeat is None:
             self.repeat = None
@@ -129,6 +130,10 @@ class Event:
             return str(self._id)
         self._id = uuid4()
         return str(self._id)
+
+    @property
+    def timestamp(self) -> dt:
+        return discord.utils.naive_dt(self._timestamp)
 
     @classmethod
     async def fetch_by_id(

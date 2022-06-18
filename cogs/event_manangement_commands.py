@@ -1,13 +1,15 @@
 import asyncio
+from typing import Optional
 from uuid import uuid4
 from datetime import datetime as dt
 
 import discord
 from discord.ext import commands, vbu
+import pytz
 
 from cogs.utils import Event
 from cogs.utils.types import GuildContext, GuildInteraction
-from cogs.utils.values import MONTH_OPTIONS
+from cogs.utils.values import MONTH_OPTIONS, get_timezone_command_option
 
 
 class EventManagementCommands(vbu.Cog[vbu.Bot]):
@@ -43,6 +45,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
                     min_value=1,
                     max_value=31,
                 ),
+                get_timezone_command_option(),
             ],
         ),
     )
@@ -51,7 +54,8 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             ctx: GuildContext,
             name: str,
             month: int,
-            day: int):
+            day: int,
+            timezone: str = "UTC"):
         """
         Add a new event to the server's calendar.
         """
@@ -61,6 +65,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             dt.utcnow().year,
             month,
             day,
+            tzinfo=pytz.timezone(timezone),
         )
         if timestamp < dt.utcnow():
             timestamp = timestamp.replace(year=timestamp.year + 1)

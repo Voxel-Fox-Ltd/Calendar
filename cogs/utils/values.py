@@ -6,6 +6,7 @@ import discord
 __all__ = (
     'MONTH_OPTIONS',
     'TIMEZONE_OPTIONS',
+    'get_timezone_command_option',
     'REPEAT_OPTIONS',
     'REPEAT_OPTIONS_WITH_NONE',
 )
@@ -35,6 +36,17 @@ TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
     discord.ApplicationCommandOptionChoice(name="MST"),
     discord.ApplicationCommandOptionChoice(name="PST"),
 )
+
+
+def get_timezone_command_option(**kwargs) -> discord.ApplicationCommandOption:
+    kwargs.setdefault("name", "timezone")
+    kwargs.setdefault("description", "The timezone that you're giving a time in. Defaults to UTC.")
+    kwargs.setdefault("required", False)
+    return discord.ApplicationCommandOption(
+        **kwargs,
+        type=discord.ApplicationCommandOptionType.string,
+        choices=list(TIMEZONE_OPTIONS),
+    ),
 
 
 REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (

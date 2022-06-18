@@ -8,7 +8,7 @@ import pytz
 import pytimeparse
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
-from cogs.utils.values import MONTH_OPTIONS, REPEAT_OPTIONS_WITH_NONE, TIMEZONE_OPTIONS
+from cogs.utils.values import MONTH_OPTIONS, REPEAT_OPTIONS_WITH_NONE, TIMEZONE_OPTIONS, get_timezone_command_option
 
 
 class MessageManager(vbu.Cog[vbu.Bot]):
@@ -310,13 +310,7 @@ class MessageManager(vbu.Cog[vbu.Bot]):
                         discord.ChannelType.text,
                     ],
                 ),
-                discord.ApplicationCommandOption(
-                    name="timezone",
-                    description="The timezone that you're giving a time in. Defaults to UTC.",
-                    type=discord.ApplicationCommandOptionType.string,
-                    choices=list(TIMEZONE_OPTIONS),
-                    required=False,
-                ),
+                get_timezone_command_option(),
             ],
         ),
     )
