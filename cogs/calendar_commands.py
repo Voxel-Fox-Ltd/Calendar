@@ -48,7 +48,6 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             guild_only=True,
         ),
     )
-    @commands.defer()
     async def calendar_show(
             self,
             ctx: Union[GuildContext, GuildInteraction],
@@ -78,6 +77,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             interaction = ctx
 
         # Get the events for that month
+        await interaction.response.defer()
         events: List[Event] = await Event.fetch_all_for_guild(
             discord.Object(interaction.guild_id),
             month=month,
