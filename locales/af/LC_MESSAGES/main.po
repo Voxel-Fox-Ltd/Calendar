@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: calendar-discord-bot\n"
+"POT-Creation-Date: 2022-05-12 04:29+0100\n"
+"PO-Revision-Date: 2022-06-18 04:24\n"
+"Last-Translator: \n"
+"Language-Team: Afrikaans\n"
+"Language: af\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ../cogs\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Crowdin-Project: calendar-discord-bot\n"
+"X-Crowdin-Project-ID: 522482\n"
+"X-Crowdin-Language: af\n"
+"X-Crowdin-File: /main/locales/main.pot\n"
+"X-Crowdin-File-ID: 60\n"
+
+#: calendar_commands.py:60
+#, python-brace-format
+msgid "There are no events in {month}."
+msgstr ""
+
+#: calendar_commands.py:130
+msgid "Your guild calendar has been created."
+msgstr ""
+
+#: event_manangement_commands.py:70
+#, python-brace-format
+msgid "There's already an event with the name **{name}**."
+msgstr ""
+
+#: event_manangement_commands.py:79
+msgid "Event saved!"
+msgstr ""
+
+#: event_manangement_commands.py:111
+#, python-brace-format
+msgid "Are you sure you want to delete the event **{name}**."
+msgstr ""
+
+#: event_manangement_commands.py:127
+msgid "Timed out waiting for a response."
+msgstr ""
+
+#: event_manangement_commands.py:138
+msgid "Alright, I won't delete that event."
+msgstr ""
+
+#: event_manangement_commands.py:147
+msgid "Event deleted!"
+msgstr ""
+
+#: utils/__init__.py:9
+msgid "January"
+msgstr ""
+
+#: utils/__init__.py:10
+msgid "February"
+msgstr ""
+
+#: utils/__init__.py:11
+msgid "March"
+msgstr ""
+
+#: utils/__init__.py:12
+msgid "April"
+msgstr ""
+
+#: utils/__init__.py:13
+msgid "May"
+msgstr ""
+
+#: utils/__init__.py:14
+msgid "June"
+msgstr ""
+
+#: utils/__init__.py:15
+msgid "July"
+msgstr ""
+
+#: utils/__init__.py:16
+msgid "August"
+msgstr ""
+
+#: utils/__init__.py:17
+msgid "September"
+msgstr ""
+
+#: utils/__init__.py:18
+msgid "October"
+msgstr ""
+
+#: utils/__init__.py:19
+msgid "November"
+msgstr ""
+
+#: utils/__init__.py:20
+msgid "December"
+msgstr ""
+
+#: utils/event.py:232
+#, python-brace-format
+msgid "There's no event with the name **{name}**."
+msgstr ""
+
