@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import List, Optional, Union, TypedDict
 from uuid import uuid4, UUID
-from enum import Enum
 from datetime import datetime as dt, timedelta
 
 import discord
@@ -10,9 +9,10 @@ from discord.abc import Snowflake
 from discord.ext import commands, vbu
 import pytz
 
+from .repeat_time import RepeatTime
+
 
 __all__ = (
-    'RepeatTime',
     'Event',
 )
 
@@ -20,16 +20,6 @@ __all__ = (
 class EventGroup(TypedDict):
     day: int
     events: List[Event]
-
-
-class RepeatTime(Enum):
-    daily = 'daily'
-    weekly = 'weekly'
-    monthly = 'monthly'
-    yearly = 'yearly'
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}.{self.name}"
 
 
 class Event:
@@ -75,7 +65,8 @@ class Event:
         Parameters
         ----------
         id : Optional[Optional[Union[UUID, str]]]
-            The ID of the event. If not given, one will be generated.
+            The ID of the event. If not given, one will be generated
+            when `.id` is called.
         guild_id : int
             The ID of the guild associated with the event.
         user_id : int
@@ -121,8 +112,7 @@ class Event:
                 "guild_id",
                 "user_id",
                 "name",
-                "month",
-                "day",
+                "timestamp",
                 "repeat"):
             values.append("{0}={1!r}".format(i, getattr(self, i)))
         return f"{self.__class__.__name__}({', '.join(values)})"
@@ -349,7 +339,7 @@ class Event:
             event = await cls.fetch_by_name(ctx.guild, value)
         if event is None:
             tra = vbu.translation(ctx, "main")
-            text = tra.gettext("There's no event with the name **{name}**.")
+            text = tra.gettext("There's no event with the name/ID **{name}**.")
             raise commands.BadArgument(text.format(name=value))
         return event
 
@@ -358,7 +348,7 @@ class Event:
             *,
             db: Optional[vbu.Database] = None) -> None:
         """
-        Get an event from the database.
+        Save this event into the database.
 
         Parameters
         ----------
@@ -420,7 +410,8 @@ class Event:
             *,
             db: Optional[vbu.Database] = None) -> None:
         """
-        Get an event from the database.
+        Delete this instance of the event. Only works if this
+        instance has an ID assigned.
 
         Parameters
         ----------

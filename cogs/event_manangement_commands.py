@@ -110,7 +110,6 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             guild_only=True,
         ),
     )
-    @commands.defer()
     async def event_delete(
             self,
             ctx: GuildContext,
@@ -120,6 +119,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         """
 
         # Get the event
+        await ctx.interaction.response.defer()
         event: Event = await Event.convert(ctx, name)
 
         # Threaten to delete the event
