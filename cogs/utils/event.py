@@ -8,6 +8,7 @@ from datetime import datetime as dt, timedelta
 import discord
 from discord.abc import Snowflake
 from discord.ext import commands, vbu
+import pytz
 
 
 __all__ = (
@@ -46,7 +47,8 @@ class Event:
     name : str
         The name of the event.
     timestamp : datetime.datetime
-        The time that the event starts.
+        The time that the event starts. This time will
+        always have a timezone attached to it.
     repeat : Optional[RepeatTime]
         How often the event repeats.
     """
@@ -81,7 +83,8 @@ class Event:
         name : str
             The name of the event.
         timestamp : dt
-            The time that the event starts.
+            The time that the event starts. This time may or may not
+            have a timezone attached to it.
         repeat : Optional[Union[RepeatTime, str]]
             How often the event repeats. If a string is given,
             it will be cast into a `RepeatTime`.
@@ -133,7 +136,10 @@ class Event:
 
     @property
     def timestamp(self) -> dt:
-        return discord.utils.naive_dt(self._timestamp)
+        if self._timestamp.tzinfo:
+            return self._timestamp
+        self._timestamp = self._timestamp.replace(tzinfo=pytz.utc)
+        return self._timestamp
 
     @classmethod
     async def fetch_by_id(
@@ -401,7 +407,7 @@ class Event:
                 repeat = excluded.repeat
             """,
             self.id, self.guild_id, self.user_id,
-            self.name, self.timestamp,
+            self.name, discord.utils.naive_dt(self.timestamp),
             self.repeat.name if self.repeat else None,
         )
 

@@ -67,7 +67,7 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             day,
             tzinfo=pytz.timezone(timezone),
         )
-        if timestamp < dt.utcnow():
+        if timestamp < discord.utils.utcnow():
             timestamp = timestamp.replace(year=timestamp.year + 1)
         event = Event(
             guild_id=ctx.interaction.guild_id,
