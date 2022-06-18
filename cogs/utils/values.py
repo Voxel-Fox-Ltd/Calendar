@@ -1,12 +1,17 @@
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple, Union
 
 import discord
+from discord.ext import commands, vbu
+
+if TYPE_CHECKING:
+    from .types import GuildContext
 
 
 __all__ = (
     'MONTH_OPTIONS',
     'TIMEZONE_OPTIONS',
     'get_timezone_command_option',
+    'send_schedule_list_message',
     'REPEAT_OPTIONS',
     'REPEAT_OPTIONS_WITH_NONE',
 )
@@ -26,6 +31,39 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
     discord.ApplicationCommandOptionChoice(name="November", value=11),
     discord.ApplicationCommandOptionChoice(name="December", value=12),
 )
+
+async def send_schedule_list_message(
+        ctx: Union[GuildContext, discord.Interaction],
+        *,
+        message_text: str,
+        custom_id_prefix: str):
+    """
+    Send a list of buttons that the user can click to look at the schedule.
+    """
+
+    # Set up a translation table
+    tra = vbu.translation(ctx, "main")
+
+    # Work out what our interaction is
+    interaction: discord.Interaction
+    if isinstance(ctx, commands.Context):
+        interaction = ctx.interaction
+    else:
+        interaction = ctx
+
+    # Send buttons
+    return await interaction.response.send_message(
+        message_text,
+        components=discord.ui.MessageComponents.add_buttons_with_rows(
+            *[
+                discord.ui.Button(
+                    label=tra.gettext(i.name),
+                    custom_id=f"{custom_id_prefix} {i.value}",
+                )
+                for i in MONTH_OPTIONS
+            ]
+        )
+    )
 
 
 TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (

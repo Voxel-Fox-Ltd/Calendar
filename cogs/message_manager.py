@@ -8,7 +8,12 @@ import pytz
 import pytimeparse
 
 from cogs.utils.types import GuildContext, ScheduledMessageDict
-from cogs.utils.values import MONTH_OPTIONS, REPEAT_OPTIONS_WITH_NONE, TIMEZONE_OPTIONS, get_timezone_command_option
+from cogs.utils.values import (
+    MONTH_OPTIONS,
+    REPEAT_OPTIONS_WITH_NONE,
+    get_timezone_command_option,
+    send_schedule_list_message,
+)
 
 
 class MessageManager(vbu.Cog[vbu.Bot]):
@@ -622,7 +627,13 @@ class MessageManager(vbu.Cog[vbu.Bot]):
 
         # See if a month was specified
         if month is None:
-            return await self.send_schedule_list_message(ctx)
+            tra = vbu.translation(ctx, "main")
+            text = tra.gettext("Click any month to see the scheduled messages.")
+            return await send_schedule_list_message(
+                ctx,
+                message_text=text,
+                custom_id_prefix="SCHEDULE_LIST_COMMAND",
+            )
 
         # Get times
         now = dt.utcnow()
@@ -701,38 +712,6 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         return await interaction.followup.send(
             "\n".join(message_strings),
             allowed_mentions=discord.AllowedMentions.none(),
-        )
-
-    async def send_schedule_list_message(
-            self,
-            ctx: Union[GuildContext, discord.Interaction]):
-        """
-        Send a list of buttons that the user can click to look at the schedule.
-        """
-
-        # Set up a translation table
-        tra = vbu.translation(ctx, "main")
-
-        # Work out what our interaction is
-        interaction: discord.Interaction
-        if isinstance(ctx, commands.Context):
-            interaction = ctx.interaction
-        else:
-            interaction = ctx
-
-        # Send buttons
-        text = tra.gettext("Click any month to see the scheduled messages.")
-        return await interaction.response.send_message(
-            text,
-            components=discord.ui.MessageComponents.add_buttons_with_rows(
-                *[
-                    discord.ui.Button(
-                        label=tra.gettext(i.name),
-                        custom_id=f"SCHEDULE_LIST_COMMAND {i.value}",
-                    )
-                    for i in MONTH_OPTIONS
-                ]
-            )
         )
 
     @vbu.Cog.listener("on_component_interaction")

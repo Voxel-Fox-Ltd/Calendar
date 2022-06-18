@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Optional, Union
 import operator
 
 import discord
@@ -9,7 +9,8 @@ from discord.ext import commands, vbu
 
 from cogs.utils import Event
 from cogs.utils.types import GuildContext
-from cogs.utils.values import MONTH_OPTIONS
+from cogs.utils.types.context import GuildInteraction
+from cogs.utils.values import MONTH_OPTIONS, send_schedule_list_message
 
 
 @dataclass
@@ -41,6 +42,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                     type=discord.ApplicationCommandOptionType.integer,
                     description="The month that you want to look at.",
                     choices=list(MONTH_OPTIONS),
+                    required=False,
                 ),
             ],
             guild_only=True,
@@ -49,8 +51,8 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
     @commands.defer()
     async def calendar_show(
             self,
-            ctx: GuildContext,
-            month: int):
+            ctx: Union[GuildContext, GuildInteraction],
+            month: Optional[int] = None):
         """
         Show all of the events for a given month.
         """
@@ -58,14 +60,34 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         # Set up translation table
         tra = vbu.translation(ctx, "main")
 
+        # If they didn't give a month, put out a list of months
+        if month is None:
+            tra = vbu.translation(ctx, "main")
+            text = tra.gettext("Click any month to see the events.")
+            return await send_schedule_list_message(
+                ctx,
+                message_text=text,
+                custom_id_prefix="CALENDAR_SHOW_COMMAND",
+            )
+
+        # Work out what our context is
+        interaction: discord.Interaction
+        if isinstance(ctx, commands.Context):
+            interaction = ctx.interaction
+        else:
+            interaction = ctx
+
         # Get the events for that month
-        events: List[Event] = await Event.fetch_all_for_guild(ctx.guild, month=month)
+        events: List[Event] = await Event.fetch_all_for_guild(
+            discord.Object(interaction.guild_id),
+            month=month,
+        )
 
         # See if there are events in that month
         if not events:
             month_i8n = tra.gettext(MONTH_OPTIONS[month - 1].name)
             text = tra.gettext("There are no events in {month}.").format(month=month_i8n)
-            return await ctx.interaction.followup.send(text)
+            return await interaction.followup.send(text)
 
         # Give them a list
         event_strings: List[str] = []
@@ -81,9 +103,28 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                 event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}...")
             else:
                 event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}")
-        await ctx.interaction.followup.send(
+        await interaction.followup.send(
             "\n".join(event_strings),
             allowed_mentions=discord.AllowedMentions.none(),
+        )
+
+    @vbu.Cog.listener("on_component_interaction")
+    async def schedule_list_command_button(
+            self,
+            interaction: discord.Interaction):
+        """
+        Waits for schedule list commands' buttons being pressed, and
+        runs the command accordingly.
+        """
+
+        # Make sure the button is correct
+        if not interaction.custom_id.startswith("CALENDAR_SHOW_COMMAND"):
+            return
+
+        # And run command
+        await self.calendar_show(
+            interaction,
+            int(interaction.custom_id.split(" ")[-1]),
         )
 
     @calendar.command(
