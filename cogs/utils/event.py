@@ -301,7 +301,7 @@ class Event:
                 WHERE
                     guild_id = $1
                 AND
-                    month = $2
+                    EXTRACT(MONTH FROM guild_events.timestamp) = $2
                 """,
                 guild.id, month,
             )
