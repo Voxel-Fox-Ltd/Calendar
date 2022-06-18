@@ -467,7 +467,10 @@ class Event:
 
         # Group events by day
         grouped_events: List[EventGroup] = []
-        current_day = dt(dt.utcnow().year, events[0].timestamp.month, 1)
+        try:
+            current_day = dt(dt.utcnow().year, events[0].timestamp.month, 1)
+        except IndexError:
+            current_day = dt.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         starting_day = current_day
         while starting_day.month == current_day.month:
             grouped_events.append({
