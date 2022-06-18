@@ -251,10 +251,14 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         Schedule a message to be sent in a given channel at a point in the future.
         """
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # Make sure it's a valid time
         future_seconds = pytimeparse.parse(future)
         if future_seconds is None or future_seconds < 0:
-            return await ctx.interaction.response.send_message("Your given time is invalid.")
+            text = tra.gettext("Your given time is invalid.")
+            return await ctx.interaction.response.send_message(text)
 
         # Make an actual timestamp
         send_time = dt.utcnow() + timedelta(seconds=future_seconds)
@@ -357,6 +361,9 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         and a location to save it to.
         """
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # Save it to db
         await ctx.interaction.response.defer()
         async with vbu.Database() as db:
@@ -393,9 +400,14 @@ class MessageManager(vbu.Cog[vbu.Bot]):
 
         # Tell the user it's done
         future = discord.utils.format_dt(send_time, style="R")
-        response = (
-            f"Scheduled your message to be sent into {channel.mention} "
-            f"{future} with ID `{created['id']!s}` :)"
+        response = tra.gettext((
+            "Scheduled your message to be sent into {channel} "
+            "{relative_time} with ID `{event_id}` :)"
+        ))
+        response = response.format(
+            channel=channel.mention,
+            relative_time=future,
+            event_id=str(created['id']),
         )
         await ctx.interaction.followup.send(response)
 
@@ -434,11 +446,13 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         except ValueError:
             message_is_id = False
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # Only edit if we have an ID
         if not message_is_id:
-            return await ctx.interaction.response.send_message(
-                "I can only edit scheduled messages by their ID."
-            )
+            text = tra.gettext("I can only edit scheduled messages by their ID.")
+            return await ctx.interaction.response.send_message(text)
 
         # Alright, time to edit
         await ctx.interaction.response.defer()
@@ -458,7 +472,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             )
 
         # And done
-        return await ctx.interaction.followup.send("Event updated :)")
+        text = tra.gettext("Event updated :)")
+        return await ctx.interaction.followup.send(text)
 
     @schedule.command(
         name="delete",
@@ -489,11 +504,13 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         except ValueError:
             message_is_id = False
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # Only delete if we have an ID
         if not message_is_id:
-            return await ctx.interaction.response.send_message(
-                "I can only delete scheduled messages by their ID."
-            )
+            text = tra.gettext("I can only delete scheduled messages by their ID.")
+            return await ctx.interaction.response.send_message(text)
 
         # Delete from database
         await ctx.interaction.response.defer()
@@ -514,7 +531,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             )
 
         # And done
-        return await ctx.interaction.followup.send("Deleted scheduled message :)")
+        text = tra.gettext("Deleted scheduled message :)")
+        return await ctx.interaction.followup.send(text)
 
     @schedule_delete.autocomplete
     @schedule_repeat.autocomplete
@@ -661,15 +679,28 @@ class MessageManager(vbu.Cog[vbu.Bot]):
                 interaction.guild_id, start, end,
             )
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # And respond
         if not messages:
-            return await interaction.followup.send(
-                f"You have no scheduled messages for {MONTH_OPTIONS[month - 1].name} {start.year}.",
+            text = tra.gettext("There are no scheduled messages for {month_name} {year_number}.")
+            text = text.format(
+                month_name=MONTH_OPTIONS[month - 1].name,
+                year_number=start.year,
             )
+            return await interaction.followup.send(text)
+
         message_strings: List[str] = list()
         for i in messages:
             timestamp = discord.utils.format_dt(i['timestamp'].replace(tzinfo=pytz.utc))
-            text = f"\N{BULLET} <#{i['channel_id']}> at {timestamp} (`{i['id']}`): {i['text'][:50]}"
+            text = tra.gettext("\N{BULLET} {channel} at {timestamp} (`{event_id}`): {event_message}")
+            text = text.format(
+                channel=f"<#{i['channel_id']}>",
+                timestamp=timestamp,
+                event_id=i['id'],
+                event_message=i['text'][:50],
+            )
             if i['timestamp'] < dt.utcnow():
                 text = f"~~{text}~~"
             message_strings.append(text)
@@ -685,6 +716,9 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         Send a list of buttons that the user can click to look at the schedule.
         """
 
+        # Set up a translation table
+        tra = vbu.translation(ctx, "main")
+
         # Work out what our interaction is
         interaction: discord.Interaction
         if isinstance(ctx, commands.Context):
@@ -693,11 +727,15 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             interaction = ctx
 
         # Send buttons
+        text = tra.gettext("Click any month to see the scheduled messages.")
         return await interaction.response.send_message(
-            "Click any month to see the scheduled messages.",
+            text,
             components=discord.ui.MessageComponents.add_buttons_with_rows(
                 *[
-                    discord.ui.Button(label=i.name, custom_id=f"SCHEDULE_LIST_COMMAND {i.value}")
+                    discord.ui.Button(
+                        label=tra.gettext(i.name),
+                        custom_id=f"SCHEDULE_LIST_COMMAND {i.value}",
+                    )
                     for i in MONTH_OPTIONS
                 ]
             )
