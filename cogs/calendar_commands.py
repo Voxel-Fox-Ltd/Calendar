@@ -75,7 +75,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             "rd" if str(d)[-1] == "3" else
             "th"
         )
-        events.sort(key=operator.attrgetter("day"))
+        events.sort(key=operator.attrgetter("timestamp"))
         for e in events:
             if len(e.name) > 50:
                 event_strings.append(f"\N{BULLET} ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}...")
