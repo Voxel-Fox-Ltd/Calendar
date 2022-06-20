@@ -10,7 +10,7 @@ from discord.ext import commands, vbu
 import pytz
 
 from .repeat_time import RepeatTime
-from .values import DAY_OPTIONS, MONTH_OPTIONS
+from .values import DAY_OPTIONS, MONTH_OPTIONS, get_day_suffix
 
 
 __all__ = (
@@ -496,7 +496,12 @@ class Event:
             if not group['events'] and not include_empty_days:
                 continue
 
-            output_lines.append(f"**{DAY_OPTIONS[group['weekday']].name} {group['day']}**")
+            output_lines.append(
+                (
+                    f"**{DAY_OPTIONS[group['weekday']].name} "
+                    f"{group['day']}{get_day_suffix(group['day'])}**"
+                )
+            )
             for event in group['events']:
                 output_lines.append(f"\u2022 {event.name}")
 

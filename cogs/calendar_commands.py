@@ -10,7 +10,7 @@ from discord.ext import commands, vbu
 from cogs.utils import Event
 from cogs.utils.types import GuildContext
 from cogs.utils.types.context import GuildInteraction
-from cogs.utils.values import MONTH_OPTIONS, send_schedule_list_message
+from cogs.utils.values import MONTH_OPTIONS, get_day_suffix, send_schedule_list_message
 
 
 @dataclass
@@ -92,18 +92,12 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
 
         # Give them a list
         event_strings: List[str] = []
-        th_func = lambda d: (
-            "st" if str(d)[-1] == "1" else
-            "nd" if str(d)[-1] == "2" else
-            "rd" if str(d)[-1] == "3" else
-            "th"
-        )
         events.sort(key=operator.attrgetter("timestamp"))
         for e in events:
             if len(e.name) > 50:
-                text = f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}..."
+                text = f"\u2022 ({e.timestamp.day}{get_day_suffix(e.timestamp.day)}) {e.name[:50]}..."
             else:
-                text = f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}"
+                text = f"\u2022 ({e.timestamp.day}{get_day_suffix(e.timestamp.day)}) {e.name}"
             event_strings.append(text)
         await interaction.followup.send(
             "\n".join(event_strings),

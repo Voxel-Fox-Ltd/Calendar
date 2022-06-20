@@ -13,6 +13,7 @@ __all__ = (
     'MONTH_OPTIONS',
     'TIMEZONE_OPTIONS',
     'DAY_OPTIONS',
+    'get_day_suffix',
     'get_timezone_command_option',
     'send_schedule_list_message',
     'REPEAT_OPTIONS',
@@ -211,6 +212,19 @@ DAY_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         value=6
     ),
 )
+
+
+def get_day_suffix(date: int) -> str:
+    """
+    Takes a day input and gives the "th", "st", etc output.
+    """
+
+    return (
+        "st" if str(date)[-1] == "1" else
+        "nd" if str(date)[-1] == "2" else
+        "rd" if str(date)[-1] == "3" else
+        "th"
+    )
 
 
 TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
