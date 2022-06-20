@@ -101,9 +101,10 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         events.sort(key=operator.attrgetter("timestamp"))
         for e in events:
             if len(e.name) > 50:
-                event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}...")
+                text = f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name[:50]}..."
             else:
-                event_strings.append(f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}")
+                text = f"\u2022 ({e.timestamp.day}{th_func(e.timestamp.day)}) {e.name}"
+            event_strings.append(text)
         await interaction.followup.send(
             "\n".join(event_strings),
             allowed_mentions=discord.AllowedMentions.none(),
@@ -127,6 +128,20 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
             interaction,
             int(interaction.custom_id.split(" ")[-1]),
         )
+
+    @calendar.command(
+        name="refresh",
+        application_command_meta=commands.ApplicationCommandMeta(),
+    )
+    async def calendar_refresh(
+            self,
+            ctx: GuildContext):
+        """
+        Publish a calendar update.
+        """
+
+        self.bot.dispatch("calendar_update", ctx.guild)
+        await ctx.interaction.response.send_message("Published calendar update :)")
 
     @calendar.command(
         name="create",
