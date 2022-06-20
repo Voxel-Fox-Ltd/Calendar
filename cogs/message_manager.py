@@ -69,7 +69,9 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             AND
                 NOT (id = ANY($3::UUID[]))
             """,
-            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+            filter_timestamp,
+            filter_timestamp + timedelta(minutes=1),
+            [i[1] for i in filtered_ids],
         )
 
         # Add monthly
@@ -105,7 +107,9 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             AND
                 NOT (id = ANY($3::UUID[]))
             """,
-            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+            filter_timestamp,
+            filter_timestamp + timedelta(minutes=1),
+            [i[1] for i in filtered_ids],
         )
 
         # Add yearly
@@ -141,7 +145,9 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             AND
                 NOT (id = ANY($3::UUID[]))
             """,
-            filter_timestamp, filter_timestamp + timedelta(minutes=1), [i[1] for i in filtered_ids],
+            filter_timestamp,
+            filter_timestamp + timedelta(minutes=1),
+            [i[1] for i in filtered_ids],
         )
 
     @tasks.loop(seconds=10)
@@ -232,7 +238,10 @@ class MessageManager(vbu.Cog[vbu.Bot]):
                 ),
                 discord.ApplicationCommandOption(
                     name="future",
-                    description="How far in the future you want the message to be sent (eg \"1 hour 5 minutes\").",
+                    description=(
+                        "How far in the future you want the message to "
+                        "be sent (eg \"1 hour 5 minutes\")."
+                    ),
                     type=discord.ApplicationCommandOptionType.string,
                 ),
                 discord.ApplicationCommandOption(
@@ -532,7 +541,8 @@ class MessageManager(vbu.Cog[vbu.Bot]):
         # Delete from database
         await ctx.interaction.response.defer()
         async with vbu.Database() as db:
-            await db.call("""
+            await db.call(
+                """
                 DELETE FROM
                     scheduled_messages
                 WHERE
@@ -750,6 +760,7 @@ class MessageManager(vbu.Cog[vbu.Bot]):
             interaction,
             int(interaction.custom_id.split(" ")[-1]),
         )
+
 
 def setup(bot: vbu.Bot):
     x = MessageManager(bot)
