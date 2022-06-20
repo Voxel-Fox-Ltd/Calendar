@@ -487,9 +487,7 @@ class Event:
             grouped_events[e.timestamp.day - 1]['events'].append(e)
 
         # Make into a string
-        output_lines: List[str] = [
-            f"**Events for {MONTH_OPTIONS[starting_day.month - 1].name}**",
-        ]
+        output_lines: List[str] = []
         for group in grouped_events:
 
             # See if we want to include this day
@@ -498,8 +496,9 @@ class Event:
 
             output_lines.append(
                 (
-                    f"**{DAY_OPTIONS[group['weekday']].name} "
-                    f"{group['day']}{get_day_suffix(group['day'])}**"
+                    f"{'\n' if group['weekday'] == 0 else ''}**{DAY_OPTIONS[group['weekday']].name} "
+                    f"{group['day']}{get_day_suffix(group['day'])} "
+                    f"{MONTH_OPTIONS[starting_day.month - 1].name}**"
                 )
             )
             for event in group['events']:
