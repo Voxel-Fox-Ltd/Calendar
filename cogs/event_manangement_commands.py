@@ -175,10 +175,11 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         # TRANSLATORS: A message appearing when a user decides
         # to delete an event.
         text = tra.gettext("Event deleted!")
-        return await interaction.edit_original_message(
+        await interaction.edit_original_message(
             content=text,
             components=None,
         )
+        self.bot.dispatch("calendar_update", ctx.guild)
 
     @event_delete.autocomplete
     async def event_name_autocomplete(
