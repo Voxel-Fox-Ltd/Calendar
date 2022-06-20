@@ -230,10 +230,10 @@ def get_day_suffix(date: int) -> str:
 TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
     discord.ApplicationCommandOptionChoice(name="UTC"),
     discord.ApplicationCommandOptionChoice(name="GMT"),
-    discord.ApplicationCommandOptionChoice(name="EST"),
-    discord.ApplicationCommandOptionChoice(name="CST"),
-    discord.ApplicationCommandOptionChoice(name="MST"),
-    discord.ApplicationCommandOptionChoice(name="PST"),
+    discord.ApplicationCommandOptionChoice(name="US/Eastern"),
+    discord.ApplicationCommandOptionChoice(name="US/Central"),
+    discord.ApplicationCommandOptionChoice(name="US/Mountain"),
+    discord.ApplicationCommandOptionChoice(name="US/Pacific"),
 )
 
 
