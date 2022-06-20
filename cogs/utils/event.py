@@ -21,6 +21,7 @@ __all__ = (
 class EventGroup(TypedDict):
     day: int
     events: List[Event]
+    weekday: int
 
 
 class Event:
@@ -476,6 +477,7 @@ class Event:
         while starting_day.month == current_day.month:
             grouped_events.append({
                 "day": current_day.day,
+                "weekday": current_day.weekday(),
                 "events": list(),
             })
             current_day += timedelta(days=1)
@@ -494,7 +496,7 @@ class Event:
             if not group['events'] and not include_empty_days:
                 continue
 
-            output_lines.append(f"**{DAY_OPTIONS[group['day']].name} {group['day']}**")
+            output_lines.append(f"**{DAY_OPTIONS[group['weekday']].name} {group['day']}**")
             for event in group['events']:
                 output_lines.append(f"\u2022 {event.name}")
 
