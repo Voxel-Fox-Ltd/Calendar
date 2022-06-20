@@ -486,7 +486,7 @@ class Event:
 
         # Make into a string
         output_lines: List[str] = [
-            f"**Events for {MONTH_OPTIONS[current_day.month - 1].name}**",
+            f"**Events for {MONTH_OPTIONS[starting_day.month - 1].name}**",
         ]
         for group in grouped_events:
 
