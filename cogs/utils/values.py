@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 __all__ = (
     'MONTH_OPTIONS',
     'TIMEZONE_OPTIONS',
+    'DAY_OPTIONS',
     'get_timezone_command_option',
     'send_schedule_list_message',
     'REPEAT_OPTIONS',
@@ -150,6 +151,66 @@ async def send_schedule_list_message(
             ]
         )
     )
+
+
+DAY_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
+    discord.ApplicationCommandOptionChoice(
+        name="Monday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Monday")
+            for i in discord.Locale
+        },
+        value=0
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Tuesday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Tuesday")
+            for i in discord.Locale
+        },
+        value=1
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Wednesday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Wednesday")
+            for i in discord.Locale
+        },
+        value=2
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Thursday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Thursday")
+            for i in discord.Locale
+        },
+        value=3
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Friday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Friday")
+            for i in discord.Locale
+        },
+        value=4
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Saturday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Saturday")
+            for i in discord.Locale
+        },
+        value=5
+    ),
+    discord.ApplicationCommandOptionChoice(
+        name="Sunday",
+        name_localizations={
+            i: vbu.translation(i, "main").gettext("Sunday")
+            for i in discord.Locale
+        },
+        value=6
+    ),
+)
 
 
 TIMEZONE_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
