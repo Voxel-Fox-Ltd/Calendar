@@ -10,6 +10,7 @@ from discord.ext import commands, vbu
 import pytz
 
 from .repeat_time import RepeatTime
+from .values import MONTH_OPTIONS
 
 
 __all__ = (
@@ -484,7 +485,9 @@ class Event:
             grouped_events[e.timestamp.day - 1]['events'].append(e)
 
         # Make into a string
-        output_lines: List[str] = []
+        output_lines: List[str] = [
+            f"**Events for {MONTH_OPTIONS[current_day.month - 1].name}**",
+        ]
         for group in grouped_events:
 
             # See if we want to include this day
