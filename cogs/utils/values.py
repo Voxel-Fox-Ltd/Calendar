@@ -24,7 +24,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="January",
         name_localizations={
             i: vbu.translation(i, "main").gettext("January")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=1
     ),
@@ -32,7 +32,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="February",
         name_localizations={
             i: vbu.translation(i, "main").gettext("February")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=2
     ),
@@ -40,7 +40,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="March",
         name_localizations={
             i: vbu.translation(i, "main").gettext("March")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=3
     ),
@@ -48,7 +48,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="April",
         name_localizations={
             i: vbu.translation(i, "main").gettext("April")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=4
     ),
@@ -56,7 +56,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="May",
         name_localizations={
             i: vbu.translation(i, "main").gettext("May")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=5
     ),
@@ -64,7 +64,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="June",
         name_localizations={
             i: vbu.translation(i, "main").gettext("June")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=6
     ),
@@ -72,7 +72,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="July",
         name_localizations={
             i: vbu.translation(i, "main").gettext("July")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=7
     ),
@@ -80,7 +80,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="August",
         name_localizations={
             i: vbu.translation(i, "main").gettext("August")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=8
     ),
@@ -88,7 +88,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="September",
         name_localizations={
             i: vbu.translation(i, "main").gettext("September")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=9
     ),
@@ -96,7 +96,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="October",
         name_localizations={
             i: vbu.translation(i, "main").gettext("October")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=10,
     ),
@@ -104,7 +104,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="November",
         name_localizations={
             i: vbu.translation(i, "main").gettext("November")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=11,
     ),
@@ -112,7 +112,7 @@ MONTH_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name="December",
         name_localizations={
             i: vbu.translation(i, "main").gettext("December")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value=12,
     ),
@@ -179,7 +179,7 @@ REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name_localizations={
             # TRANSLATORS: When describing how often an event occurs.
             i: vbu.translation(i, "main").gettext("Daily")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value="daily",
     ),
@@ -188,7 +188,7 @@ REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name_localizations={
             # TRANSLATORS: When describing how often an event occurs.
             i: vbu.translation(i, "main").gettext("Monthly")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value="monthly",
     ),
@@ -197,7 +197,7 @@ REPEAT_OPTIONS: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name_localizations={
             # TRANSLATORS: When describing how often an event occurs.
             i: vbu.translation(i, "main").gettext("Yearly")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value="yearly",
     ),
@@ -210,7 +210,7 @@ REPEAT_OPTIONS_WITH_NONE: Tuple[discord.ApplicationCommandOptionChoice, ...] = (
         name_localizations={
             # TRANSLATORS: When describing how often an event occurs.
             i: vbu.translation(i, "main").gettext("None")
-            for i in ["en"]
+            for i in discord.Locale
         },
         value="none",
     ),
