@@ -97,13 +97,13 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         for e in events:
             if len(e.name) > 50:
                 text = (
-                    f"\u2022 (***{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
-                    f"{month_i8n}***) {e.name[:50]}..."
+                    f"\u2022 (**{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
+                    f"{month_i8n}**) {e.name[:50]}..."
                 )
             else:
                 text = (
-                    f"\u2022 (***{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
-                    f"{month_i8n}***) {e.name}"
+                    f"\u2022 (**{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
+                    f"{month_i8n}**) {e.name}"
                 )
             event_strings.append(text)
         await interaction.followup.send(
