@@ -267,7 +267,10 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         # Try and edit the message
         calendar_content = Event.format_events(events, include_empty_days=True)
         try:
-            await message.edit(content=calendar_content)
+            await message.edit(
+                content=calendar_content,
+                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False),
+            )
         except discord.HTTPException:
             async with vbu.Database() as db:
                 await db.call(
