@@ -93,7 +93,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
 
         # Give them a list
         event_strings: List[str] = []
-        events.sort(key=operator.attrgetter("timestamp"))
+        events.sort(key=lambda e: (e.timestamp.month, e.timestamp.day,))
         for e in events:
             if len(e.name) > 50:
                 text = (
