@@ -86,8 +86,8 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         )
 
         # See if there are events in that month
+        month_i8n = tra.gettext(MONTH_OPTIONS[month - 1].name)
         if not events:
-            month_i8n = tra.gettext(MONTH_OPTIONS[month - 1].name)
             text = tra.gettext("There are no events in {month}.").format(month=month_i8n)
             return await interaction.followup.send(text)
 
@@ -96,9 +96,15 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         events.sort(key=operator.attrgetter("timestamp"))
         for e in events:
             if len(e.name) > 50:
-                text = f"\u2022 ({e.timestamp.day}{get_day_suffix(e.timestamp.day)}) {e.name[:50]}..."
+                text = (
+                    f"\u2022 (***{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
+                    f"{month_i8n}***) {e.name[:50]}..."
+                )
             else:
-                text = f"\u2022 ({e.timestamp.day}{get_day_suffix(e.timestamp.day)}) {e.name}"
+                text = (
+                    f"\u2022 (***{e.timestamp.day}{get_day_suffix(e.timestamp.day)} "
+                    f"{month_i8n}***) {e.name}"
+                )
             event_strings.append(text)
         await interaction.followup.send(
             "\n".join(event_strings),
