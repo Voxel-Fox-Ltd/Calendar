@@ -28,6 +28,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
     @commands.group(
         application_command_meta=commands.ApplicationCommandMeta(
             guild_only=True,
+            permissions=discord.Permissions(manage_guild=True),
         ),
     )
     async def calendar(self, _):
