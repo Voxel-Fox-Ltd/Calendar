@@ -291,6 +291,8 @@ class Event:
                     guild_id = $1
                 AND
                     LOWER(name) LIKE '%' || LOWER($2) || '%'
+                ORDER BY
+                    timestamp ASC
                 """,
                 guild.id, name,
             )
@@ -305,6 +307,8 @@ class Event:
                     guild_id = $1
                 AND
                     EXTRACT(MONTH FROM guild_events.timestamp) = $2
+                ORDER BY
+                    timestamp ASC
                 """,
                 guild.id, month,
             )
@@ -317,6 +321,8 @@ class Event:
                     guild_events
                 WHERE
                     guild_id = $1
+                ORDER BY
+                    timestamp ASC
                 """,
                 guild.id,
             )
