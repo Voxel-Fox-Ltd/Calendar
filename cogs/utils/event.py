@@ -249,6 +249,7 @@ class Event:
             *,
             name: Optional[str] = None,
             month: Optional[int] = None,
+            year: Optional[int] = None,
             db: Optional[vbu.Database] = None) -> List[Event]:
         """
         Get an event from the database given a guild ID and a name.
@@ -262,6 +263,8 @@ class Event:
             A name (case insensitive) that you want to fuzzy match for.
         month : Optional[Optional[int]]
             A month to match by.
+        year : Optional[Optional[int]]
+            A year to match by.
         db : Optional[Optional[vbu.Database]]
             A database instance. Will open a new instance
             if none is given.
@@ -297,21 +300,40 @@ class Event:
                 guild.id, name,
             )
         elif month:
-            rows = await _db.call(
-                """
-                SELECT
-                    *
-                FROM
-                    guild_events
-                WHERE
-                    guild_id = $1
-                AND
-                    EXTRACT(MONTH FROM guild_events.timestamp) = $2
-                ORDER BY
-                    timestamp ASC
-                """,
-                guild.id, month,
-            )
+            if year:
+                rows = await _db.call(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        guild_events
+                    WHERE
+                        guild_id = $1
+                    AND
+                        EXTRACT(MONTH FROM guild_events.timestamp) = $2
+                    AND
+                        EXTRACT(YEAR FROM guild_events.timestamp) = $3
+                    ORDER BY
+                        timestamp ASC
+                    """,
+                    guild.id, month, year
+                )
+            else:
+                rows = await _db.call(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        guild_events
+                    WHERE
+                        guild_id = $1
+                    AND
+                        EXTRACT(MONTH FROM guild_events.timestamp) = $2
+                    ORDER BY
+                        timestamp ASC
+                    """,
+                    guild.id, month
+                )
         else:
             rows = await _db.call(
                 """
