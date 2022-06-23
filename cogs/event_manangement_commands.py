@@ -8,7 +8,7 @@ import pytz
 
 from cogs.utils import Event
 from cogs.utils.types import GuildContext, GuildInteraction
-from cogs.utils.values import MONTH_OPTIONS, get_timezone_command_option
+from cogs.utils.values import MONTH_OPTIONS
 
 
 class EventManagementCommands(vbu.Cog[vbu.Bot]):
@@ -44,7 +44,6 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
                     min_value=1,
                     max_value=31,
                 ),
-                get_timezone_command_option(),
             ],
         ),
     )
@@ -196,15 +195,18 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         The autocomplete for guild names.
         """
 
-        option: discord.ApplicationCommandInteractionDataOption
-        try:
-            option = interaction.options[0].options[0]  # type: ignore
-        except Exception:
-            return await interaction.response.send_autocomplete()
+        # Get the name option
+        options = interaction.options
+        while options and options[0].type == discord.ApplicationCommandOptionType.subcommand:
+            options = options[0].options
+
+        # Get all of the events
         events = await Event.fetch_all_for_guild(
             ctx.guild,
-            name=option.value,
+            name=option[0].value,
         )
+
+        # Send autocomplete
         await interaction.response.send_autocomplete([
             discord.ApplicationCommandOptionChoice(name=e.name, value=e.id)
             for e in events
