@@ -215,13 +215,14 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
     @vbu.Cog.listener()
     async def on_calendar_update(
             self,
-            guild: Snowflake) -> None:
+            guild: discord.Guild) -> None:
         """
         Update a calendar for the guild. Fail silently if the guild has no calendar
         URL, or delete the URL from the guild if the message fails to update.
         """
 
         # Get data
+        current_month: int = dt.utcnow().month
         async with vbu.Database() as db:
 
             # Get message URL
@@ -245,7 +246,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
                 return
 
             # Get the events
-            events = await Event.fetch_all_for_guild(guild, month=dt.utcnow().month, db=db)
+            events = await Event.fetch_all_for_guild(guild, month=current_month, db=db)
 
         # Get message
         ctx = FakeContext(bot=self.bot, guild=guild)
@@ -266,9 +267,11 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
 
         # Try and edit the message
         calendar_content = Event.format_events(events, include_empty_days=True)
+        month_name = MONTH_OPTIONS[current_month].name_localizations[guild.preferred_locale or "en-US"]
+        calendar_prefix = f"__**{month_name}**__"
         try:
             await message.edit(
-                content=calendar_content,
+                content=f"{calendar_prefix}\n\n{calendar_content}",
                 allowed_mentions=discord.AllowedMentions(everyone=False, roles=False),
             )
         except discord.HTTPException:
