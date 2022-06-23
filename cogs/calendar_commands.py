@@ -80,12 +80,9 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
 
         # Get the events for that month
         await interaction.response.defer()
-        now = discord.utils.utcnow()
-        year = now.year if month <= now.month else now.year + 1
         events: List[Event] = await Event.fetch_all_for_guild(
             discord.Object(interaction.guild_id),
             month=month,
-            year=year,
         )
 
         # See if there are events in that month
