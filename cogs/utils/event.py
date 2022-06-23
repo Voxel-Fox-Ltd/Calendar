@@ -295,7 +295,8 @@ class Event:
                 AND
                     LOWER(name) LIKE '%' || LOWER($2) || '%'
                 ORDER BY
-                    timestamp ASC
+                    EXTRACT(MONTH FROM guild_events.timestamp) ASC,
+                    EXTRACT(DAY FROM guild_events.timestamp) ASC
                 """,
                 guild.id, name,
             )
@@ -314,7 +315,8 @@ class Event:
                     AND
                         EXTRACT(YEAR FROM guild_events.timestamp) = $3
                     ORDER BY
-                        timestamp ASC
+                        EXTRACT(MONTH FROM guild_events.timestamp) ASC,
+                        EXTRACT(DAY FROM guild_events.timestamp) ASC
                     """,
                     guild.id, month, year
                 )
@@ -330,7 +332,8 @@ class Event:
                     AND
                         EXTRACT(MONTH FROM guild_events.timestamp) = $2
                     ORDER BY
-                        timestamp ASC
+                        EXTRACT(MONTH FROM guild_events.timestamp) ASC,
+                        EXTRACT(DAY FROM guild_events.timestamp) ASC
                     """,
                     guild.id, month
                 )
@@ -344,7 +347,8 @@ class Event:
                 WHERE
                     guild_id = $1
                 ORDER BY
-                    timestamp ASC
+                    EXTRACT(MONTH FROM guild_events.timestamp) ASC,
+                    EXTRACT(DAY FROM guild_events.timestamp) ASC
                 """,
                 guild.id,
             )
