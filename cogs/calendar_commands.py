@@ -268,8 +268,7 @@ class CalendarCommands(vbu.Cog[vbu.Bot]):
         # Try and edit the message
         calendar_content = Event.format_events(events, include_empty_days=True)
         month_name = MONTH_OPTIONS[current_month].name_localizations[
-            guild.preferred_locale
-            or discord.Locale.american_english
+            discord.Locale(guild.preferred_locale or "en-US")
         ]
         calendar_prefix = f"__**{month_name}**__"
         try:
