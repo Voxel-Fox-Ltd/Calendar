@@ -59,13 +59,22 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
         Add a new event to the server's calendar.
         """
 
+        # Set up translation table
+        tra = vbu.translation(ctx, "main")
+
         # Create an event object
-        timestamp = dt(
-            dt.utcnow().year,
-            month,
-            day,
-            tzinfo=pytz.timezone(timezone),
-        )
+        try:
+            timestamp = dt(
+                dt.utcnow().year,
+                month,
+                day,
+                tzinfo=pytz.timezone(timezone),
+            )
+        except ValueError:
+            return await ctx.interaction.response.send_message(
+                tra.gettext("Day is out of range for this month."),
+                ephemeral=True,
+            )
         if timestamp < discord.utils.utcnow():
             timestamp = timestamp.replace(year=timestamp.year + 1)
         event = Event(
@@ -74,9 +83,6 @@ class EventManagementCommands(vbu.Cog[vbu.Bot]):
             name=name,
             timestamp=timestamp,
         )
-
-        # Set up translation table
-        tra = vbu.translation(ctx, "main")
 
         # Defer so we can check if the event exists
         await ctx.interaction.response.defer()
