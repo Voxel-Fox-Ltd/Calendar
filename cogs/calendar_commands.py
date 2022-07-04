@@ -1,7 +1,6 @@
 from datetime import datetime as dt
 from dataclasses import dataclass
 from typing import List, Optional, Union
-import operator
 
 import discord
 from discord.abc import Snowflake
