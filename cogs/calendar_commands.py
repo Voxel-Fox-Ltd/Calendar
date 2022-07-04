@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 
 import discord
 from discord.abc import Snowflake
-from discord.ext import commands, vbu
+from discord.ext import commands, tasks, vbu
 
 from cogs.utils import Event
 from cogs.utils.types import GuildContext
@@ -23,6 +23,18 @@ class FakeContext:
 
 
 class CalendarCommands(vbu.Cog[vbu.Bot]):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @tasks.loop(minutes=10)
+    async def calendar_update_loop(self):
+        for g in self.bot.guilds:
+            self.bot.dispatch("calendar_update", g)
+
+    @calendar_update_loop.before_loop
+    async def before_calendar_update_loop(self):
+        await self.bot.wait_until_ready()
 
     @commands.group(
         application_command_meta=commands.ApplicationCommandMeta(
